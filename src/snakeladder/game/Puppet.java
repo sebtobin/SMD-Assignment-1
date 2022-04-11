@@ -6,7 +6,6 @@ import java.awt.Point;
 public class Puppet extends Actor
 {
   private GamePane gamePane;
-  private NavigationPane navigationPane;
   private int cellIndex = 0;
   private int nbSteps;
   private Connection currentCon = null;
@@ -15,11 +14,10 @@ public class Puppet extends Actor
   private boolean isAuto;
   private String puppetName;
 
-  Puppet(GamePane gp, NavigationPane np, String puppetImage)
+  Puppet(GamePane gp, String puppetImage)
   {
     super(puppetImage);
     this.gamePane = gp;
-    this.navigationPane = np;
   }
 
   public boolean isAuto() {
@@ -110,7 +108,7 @@ public class Puppet extends Actor
         cellIndex = currentCon.cellEnd;
         setLocationOffset(new Point(0, 0));
         currentCon = null;
-        navigationPane.prepareRoll(cellIndex);
+        gamePane.getNP().prepareRoll(cellIndex);
       }
       return;
     }
@@ -123,7 +121,7 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        navigationPane.prepareRoll(cellIndex);
+        gamePane.getNP().prepareRoll(cellIndex);
         return;
       }
 
@@ -141,19 +139,19 @@ public class Puppet extends Actor
             dy = -gamePane.animationStep;
           if (currentCon instanceof Snake)
           {
-            navigationPane.showStatus("Digesting...");
-            navigationPane.playSound(GGSound.MMM);
+            gamePane.getNP().showStatus("Digesting...");
+            gamePane.getNP().playSound(GGSound.MMM);
           }
           else
           {
-            navigationPane.showStatus("Climbing...");
-            navigationPane.playSound(GGSound.BOING);
+            gamePane.getNP().showStatus("Climbing...");
+            gamePane.getNP().playSound(GGSound.BOING);
           }
         }
         else
         {
           setActEnabled(false);
-          navigationPane.prepareRoll(cellIndex);
+          gamePane.getNP().prepareRoll(cellIndex);
         }
       }
     }
