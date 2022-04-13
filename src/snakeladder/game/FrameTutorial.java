@@ -24,7 +24,9 @@ public class FrameTutorial extends JFrame
     getContentPane().add(gp, BorderLayout.WEST);
     NavigationPane np = new NavigationPane(properties);
     getContentPane().add(np, BorderLayout.EAST);
-    np.setGamePlayCallback(new GamePlayCallback() {
+    /* Changed setGamePlayCallback to gsm instead of np. */
+    GameSessionManager gsm = new GameSessionManager(properties, np, gp);
+    gsm.setGamePlayCallback(new GamePlayCallback() {
       @Override
       public void finishGameWithResults(int winningPlayerIndex, List<String> playerCurrentPositions) {
        System.out.println("DO NOT CHANGE THIS LINE---WINNING INFORMATION: " + winningPlayerIndex + "-" + String.join(",", playerCurrentPositions));
@@ -33,11 +35,11 @@ public class FrameTutorial extends JFrame
 
     pack();  // Must be called before actors are added!
 
-    np.setGamePane(gp);
+    /*np.setGamePane(gp);
     np.createGui();
     gp.setNavigationPane(np);
     gp.createGui();
-    np.checkAuto();
+    np.checkAuto();*/
   }
 
   public static void main(String[] args)

@@ -71,16 +71,18 @@ public class NavigationPane extends GameGrid
   private GGTextField statusField;
   private GGTextField resultField;
   private GGTextField scoreField;
-  private boolean isAuto;
+  private boolean gameSessionIsAuto;
   private GGCheckButton autoChk;
   private boolean isToggle = false;
   private GGCheckButton toggleCheck =
           new GGCheckButton("Toggle Mode", YELLOW, TRANSPARENT, isToggle);
-  private int nbRolls = 0;
-  private volatile boolean isGameOver = false;
+  /*private int nbRolls = 0;*/
+  //private volatile boolean isGameOver = false;
   private Properties properties;
   private java.util.List<java.util.List<Integer>> dieValues = new ArrayList<>();
-  private GamePlayCallback gamePlayCallback;
+//  private GamePlayCallback gamePlayCallback;
+
+  private GameSessionManager gsm;
 
   NavigationPane(Properties properties)
   {
@@ -90,9 +92,9 @@ public class NavigationPane extends GameGrid
                     ? 1  // default
                     : Integer.parseInt(properties.getProperty("dice.count"));
     System.out.println("numberOfDice = " + numberOfDice);
-    isAuto = Boolean.parseBoolean(properties.getProperty("autorun"));
-    autoChk = new GGCheckButton("Auto Run", YELLOW, TRANSPARENT, isAuto);
-    System.out.println("autorun = " + isAuto);
+    /*isAuto = Boolean.parseBoolean(properties.getProperty("autorun"));*/
+    autoChk = new GGCheckButton("Auto Run", YELLOW, TRANSPARENT, gameSessionIsAuto);
+    /*System.out.println("autorun = " + isAuto);*/
     setSimulationPeriod(200);
     setBgImagePath("sprites/navigationpane.png");
     setCellSize(1);
@@ -122,9 +124,6 @@ public class NavigationPane extends GameGrid
     System.out.println("dieValues = " + dieValues);
   }
 
-  void setGamePlayCallback(GamePlayCallback gamePlayCallback) {
-    this.gamePlayCallback = gamePlayCallback;
-  }
 
   void setGamePane(GamePane gp)
   {
@@ -150,8 +149,9 @@ public class NavigationPane extends GameGrid
         CustomGGButton customGGButton = (CustomGGButton) ggButton;
         int tag = customGGButton.getTag();
         System.out.println("manual die button clicked - tag: " + tag);
-        prepareBeforeRoll();
-        roll(tag);
+        /*prepareBeforeRoll();
+        roll(tag);*/
+        gsm.rollDie(tag);
       }
     }
   }
@@ -173,7 +173,7 @@ public class NavigationPane extends GameGrid
     die6Button.addButtonListener(manualDieButton);
   }
 
-  private int getDieValue() {
+  /*private int getDieValue() {
     if (dieValues == null) {
       return RANDOM_ROLL_TAG;
     }
@@ -183,10 +183,12 @@ public class NavigationPane extends GameGrid
       return dieValues.get(playerIndex).get(currentRound);
     }
     return RANDOM_ROLL_TAG;
-  }
+  }*/
 
-  void createGui()
+  void createNPGui(boolean isAuto)
   {
+    gameSessionIsAuto = isAuto;
+
     addActor(new Actor("sprites/dieboard.gif"), dieBoardLocation);
 
     handBtn.addButtonListener(this);
@@ -196,8 +198,8 @@ public class NavigationPane extends GameGrid
       @Override
       public void buttonChecked(GGCheckButton button, boolean checked)
       {
-        isAuto = checked;
-        if (isAuto)
+        gameSessionIsAuto = checked;
+        if (gameSessionIsAuto)
           Monitor.wakeUp();
       }
     });
@@ -260,7 +262,7 @@ public class NavigationPane extends GameGrid
     System.out.println("Result: " + text);
   }
 
-  void prepareRoll(int currentIndex)
+  /*void prepareRoll(int currentIndex)
   {
     if (currentIndex == 100)  // Game over
     {
@@ -294,31 +296,31 @@ public class NavigationPane extends GameGrid
         handBtn.setEnabled(true);
       }
     }
-  }
+  }*/
 
-  void startMoving(int nb)
+  /*void startMoving(int nb)
   {
     showStatus("Moving...");
     showPips("Pips: " + nb);
     showScore("# Rolls: " + (++nbRolls));
     gp.getPuppet().go(nb);
-  }
+  }*/
 
-  void prepareBeforeRoll() {
+  /*void prepareBeforeRoll() {
     handBtn.setEnabled(false);
     if (isGameOver)  // First click after game over
     {
       isGameOver = false;
       nbRolls = 0;
     }
-  }
+  }*/
 
-  public void buttonClicked(GGButton btn)
+  /*public void buttonClicked(GGButton btn)
   {
     System.out.println("hand button clicked");
     prepareBeforeRoll();
     roll(getDieValue());
-  }
+  }*/
 
   private void roll(int rollNumber)
   {
@@ -343,6 +345,16 @@ public class NavigationPane extends GameGrid
   }
 
   public void checkAuto() {
-    if (isAuto) Monitor.wakeUp();
+    if (gameSessionIsAuto) Monitor.wakeUp();
   }
+
+  public GGButton getHandBtn() {
+    return handBtn;
+  }
+
+  public void setGsm(GameSessionManager gsm) {
+    this.gsm = gsm;
+  }
+
 }
+

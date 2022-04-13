@@ -10,11 +10,11 @@ import java.util.Properties;
 @SuppressWarnings("serial")
 public class GamePane extends GameGrid
 {
-  private NavigationPane np;
+  /*private NavigationPane np;
   private int numberOfPlayers = 1;
   private int currentPuppetIndex = 0;
   private List<Puppet> puppets =  new ArrayList<>();
-  private List<Boolean> playerManualMode;
+  private List<Boolean> playerManualMode;*/
   private ArrayList<Connection> connections = new ArrayList<Connection>();
   final Location startLocation = new Location(-1, 9);  // outside grid
   final int animationStep = 10;
@@ -54,7 +54,7 @@ public class GamePane extends GameGrid
     this.np = np;
   }
 
-  void createGui()
+  void createPlayerGui()
   {
     for (int i = 0; i < numberOfPlayers; i++) {
       boolean isAuto = playerManualMode.get(i);

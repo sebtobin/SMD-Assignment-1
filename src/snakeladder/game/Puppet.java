@@ -14,10 +14,10 @@ public class Puppet extends Actor
   private boolean isAuto;
   private String puppetName;
 
-  Puppet(GamePane gp, String puppetImage)
+  Puppet(GameSessionManager gsm, String puppetImage)
   {
     super(puppetImage);
-    this.gamePane = gp;
+    this.gsm = gsm;
   }
 
   public boolean isAuto() {
@@ -121,7 +121,7 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        gamePane.getNP().prepareRoll(cellIndex);
+        gsm.prepareRoll(cellIndex);
         return;
       }
 
