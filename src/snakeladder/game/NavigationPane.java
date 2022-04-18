@@ -22,7 +22,7 @@ public class NavigationPane extends GameGrid
       {
         Monitor.putSleep();
         handBtn.show(1);
-        playDieAnimation(gsm.rollDice(nbRolls));
+        completeRoll(gsm.rollDice(nbRolls));
         delay(1000);
         handBtn.show(0);
       }
@@ -233,7 +233,7 @@ public class NavigationPane extends GameGrid
   {
     System.out.println("hand button clicked");
     prepareBeforeRoll();
-    playDieAnimation(gsm.rollDice(nbRolls));
+    completeRoll(gsm.rollDice(nbRolls));
   }
 
   public void buttonPressed(GGButton btn)
@@ -253,7 +253,7 @@ public class NavigationPane extends GameGrid
       showStatus("Click the hand!");
       showResult("Game over");
       isGameOver = true;
-      getHandBtn().setEnabled(true);
+      handBtn.setEnabled(true);
 
       java.util.List  <String> playerPositions = new ArrayList<>();
       for (Puppet puppet: gp.getAllPuppets()) {
@@ -274,13 +274,7 @@ public class NavigationPane extends GameGrid
       System.out.println("current puppet - auto: " + gp.getPuppet().getPuppetName() +
               "  " + gp.getPuppet().isAuto() );
 
-      if (gameSessionIsAuto) {
-        Monitor.wakeUp();
-      } else if (gp.getPuppet().isAuto()) {
-        Monitor.wakeUp();
-      } else {
-        handBtn.setEnabled(true);
-      }
+      nextRoll();
     }
   }
 
@@ -302,6 +296,21 @@ public class NavigationPane extends GameGrid
     addActor(die, dieBoardLocation);
   }
 
+  public void nextRoll(){
+    if (gameSessionIsAuto) {
+      Monitor.wakeUp();
+    } else if (gp.getPuppet().isAuto()) {
+      Monitor.wakeUp();
+    } else {
+      handBtn.setEnabled(true);
+    }
+  }
+
+  public void completeRoll(int rollValue){
+    playDieAnimation(rollValue);
+    gsm.getDm().registerRoll(rollValue);
+  }
+
   /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
    *  ticks until the player has finished their movement and reached the goal.  */
   public void startMoving(int nb)
@@ -319,12 +328,12 @@ public class NavigationPane extends GameGrid
     if (gameSessionIsAuto) Monitor.wakeUp();
   }
 
-  public GGButton getHandBtn() {
-    return handBtn;
-  }
-
   public void setGsm(GameSessionManager gsm) {
     this.gsm = gsm;
+  }
+  public GameSessionManager getGsm()
+  {
+    return gsm;
   }
 
 }

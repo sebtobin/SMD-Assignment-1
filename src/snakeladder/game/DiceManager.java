@@ -10,6 +10,9 @@ public class DiceManager {
 
     int numDice;
 
+    private int numRolls = 0;
+    private int total = 0;
+
     private List<List<Integer>> dieValues = new ArrayList<List<Integer>>();
 
     public DiceManager(int numDice) {
@@ -46,8 +49,40 @@ public class DiceManager {
 
         return ServicesRandom.get().nextInt(6) + 1;
     }
+    public void registerRoll(int rollValue){
+        numRolls++;
+        total += rollValue;
+    }
 
+    public void resetValues(){
+        numRolls = 0;
+        total = 0;
+    }
     public void setNumDice(int numDice) {
         this.numDice = numDice;
+    }
+    public int getNumDice()
+    {
+        return numDice;
+    }
+
+    public int getNumRolls()
+    {
+        return numRolls;
+    }
+
+    public void setNumRolls(int numRolls)
+    {
+        this.numRolls = numRolls;
+    }
+
+    public int getTotal()
+    {
+        return total;
+    }
+
+    public void setTotal(int total)
+    {
+        this.total = total;
     }
 }

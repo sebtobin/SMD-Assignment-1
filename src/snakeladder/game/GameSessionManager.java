@@ -23,6 +23,8 @@ import java.util.Properties;
 public class GameSessionManager {
     private NavigationPane np;
     private GamePane gp;
+
+
     private DiceManager dm;
 
     GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
@@ -50,10 +52,12 @@ public class GameSessionManager {
         dm.setupInitialDieValues(properties, gp.getAllPuppets(), gp.getNumberOfPlayers());
     }
 
-
-
-    // Any extra movement logic in the future can go here and NP does not need to know about it.
+    // Any extra movement logic or method calls to be added in the future can go here and NP does not need to
+    // know about it.
     public void handleMovement(int nb){
+        if(gp.checkOtherPuppetAtGoalCell(nb)) {
+            nb = nb--;
+        }
         gp.getPuppet().go(nb);
     }
 
@@ -75,6 +79,10 @@ public class GameSessionManager {
 
     public GamePane getGP() {
         return gp;
+    }
+    public DiceManager getDm()
+    {
+        return dm;
     }
 
 

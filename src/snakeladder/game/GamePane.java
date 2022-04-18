@@ -83,11 +83,6 @@ public class GamePane extends GameGrid
     connections.addAll(PropertiesLoader.loadLadders(properties));
   }
 
-  /*void setNavigationPane(NavigationPane np)
-  {
-    this.np = np;
-  }*/
-
   Puppet getPuppet()
   {
     return puppets.get(currentPuppetIndex);
@@ -109,6 +104,22 @@ public class GamePane extends GameGrid
 
   public int getNumberOfPlayers() {
     return numberOfPlayers;
+  }
+
+  public boolean checkOtherPuppetAtGoalCell(int nbCellsToMove) {
+    // The goalCell is the cell which the Puppet is trying to move to via dice roll.
+    int goalCell = getPuppet().getCellIndex() + nbCellsToMove;
+
+    /* For each player in the game that is not the current player trying to move, if they are on the goal cell that
+     * the current player trying to move to, then the method returns true. The method returns false otherwise. */
+    for(int i = 0; i < numberOfPlayers; i++) {
+      if(i != currentPuppetIndex) {
+        if(puppets.get(i).getCellIndex() == goalCell) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   Connection getConnectionAt(Location loc)
