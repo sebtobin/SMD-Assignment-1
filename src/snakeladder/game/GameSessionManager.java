@@ -23,6 +23,8 @@ import java.util.Properties;
 public class GameSessionManager {
     private NavigationPane np;
     private GamePane gp;
+
+
     private DiceManager dm;
 
     GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
@@ -75,6 +77,10 @@ public class GameSessionManager {
 
     public GamePane getGP() {
         return gp;
+    }
+    public DiceManager getDm()
+    {
+        return dm;
     }
 
 
