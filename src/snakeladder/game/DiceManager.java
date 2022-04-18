@@ -42,6 +42,7 @@ public class DiceManager {
             currPlayer.setNbRollsPuppet(currPlayer.getNbRollsPuppet() + 1);
             return dieValues.get(currPlayer.getNbRollsPuppet() - 1);
         }
+
         return ServicesRandom.get().nextInt(6) + 1;
     }
 
