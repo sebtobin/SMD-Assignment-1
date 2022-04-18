@@ -67,10 +67,6 @@ public class GameSessionManager {
         return dm.getDieValues(gp.getAllPuppets(), gp.getNumberOfPlayers(), nbRolls);
     }
 
-    //---- Dice Manager stuff ----
-
-    //---- Dice Manager stuff ----
-
     //--------------------------Getters and Setters----------------------------------------
 
     public NavigationPane getNP() {
