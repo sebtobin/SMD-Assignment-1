@@ -2,6 +2,8 @@ package snakeladder.game;
 
 import ch.aplu.jgamegrid.*;
 import java.awt.Point;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Puppet extends Actor
 {
@@ -14,10 +16,19 @@ public class Puppet extends Actor
   private boolean isAuto;
   private String puppetName;
 
-  Puppet(GameSessionManager gsm, String puppetImage)
+  private List<Integer> playerDieValues;
+
+  // The number of rolls this Puppet object has had in the game.
+  private int nbRollsPuppet = 0;
+
+  Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName)
   {
     super(puppetImage);
-    this.gsm = gsm;
+    this.gamePane = gamePane;
+    this.isAuto = isAuto;
+    this.puppetName = puppetName;
+
+    playerDieValues = new ArrayList<>();
   }
 
   public boolean isAuto() {
@@ -34,6 +45,12 @@ public class Puppet extends Actor
 
   public void setPuppetName(String puppetName) {
     this.puppetName = puppetName;
+  }
+
+  public void setupPlayerDieValues(String[] dieValueStrings){
+    for (int j = 0; j < dieValueStrings.length; j++) {
+      this.playerDieValues.add(Integer.parseInt(dieValueStrings[j]));
+    }
   }
 
   void go(int nbSteps)
@@ -108,7 +125,7 @@ public class Puppet extends Actor
         cellIndex = currentCon.cellEnd;
         setLocationOffset(new Point(0, 0));
         currentCon = null;
-        gamePane.getNP().prepareRoll(cellIndex);
+        gamePane.getGSM().verifyGameStatus(cellIndex);
       }
       return;
     }
@@ -121,7 +138,7 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        gsm.prepareRoll(cellIndex);
+        gamePane.getGSM().verifyGameStatus(cellIndex);
         return;
       }
 
@@ -139,22 +156,23 @@ public class Puppet extends Actor
             dy = -gamePane.animationStep;
           if (currentCon instanceof Snake)
           {
-            gamePane.getNP().showStatus("Digesting...");
-            gamePane.getNP().playSound(GGSound.MMM);
+            gamePane.getGSM().getNP().showStatus("Digesting...");
+            gamePane.getGSM().getNP().playSound(GGSound.MMM);
           }
           else
           {
-            gamePane.getNP().showStatus("Climbing...");
-            gamePane.getNP().playSound(GGSound.BOING);
+            gamePane.getGSM().getNP().showStatus("Climbing...");
+            gamePane.getGSM().getNP().playSound(GGSound.BOING);
           }
         }
         else
         {
           setActEnabled(false);
-          gamePane.getNP().prepareRoll(cellIndex);
+          gamePane.getGSM().verifyGameStatus(cellIndex);
         }
       }
     }
   }
+
 
 }

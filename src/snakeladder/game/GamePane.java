@@ -10,11 +10,13 @@ import java.util.Properties;
 @SuppressWarnings("serial")
 public class GamePane extends GameGrid
 {
-  /*private NavigationPane np;
+  private GameSessionManager gsm;
+
   private int numberOfPlayers = 1;
   private int currentPuppetIndex = 0;
   private List<Puppet> puppets =  new ArrayList<>();
-  private List<Boolean> playerManualMode;*/
+  //private List<Boolean> playerManualMode;
+
   private ArrayList<Connection> connections = new ArrayList<Connection>();
   final Location startLocation = new Location(-1, 9);  // outside grid
   final int animationStep = 10;
@@ -37,11 +39,22 @@ public class GamePane extends GameGrid
 
   void setupPlayers(Properties properties) {
     numberOfPlayers = Integer.parseInt(properties.getProperty("players.count"));
-    playerManualMode = new ArrayList<>();
+    //playerManualMode = new ArrayList<>();
     for (int i = 0; i < numberOfPlayers; i++) {
-      playerManualMode.add(Boolean.parseBoolean(properties.getProperty("players." + i + ".isAuto")));
+      // Create the GUI for each player
+      int spriteImageIndex = i % MAX_PUPPET_SPRITES;
+      String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
+
+      // Create the player itself
+      boolean puppetIsAuto = Boolean.parseBoolean(properties.getProperty("players." + i + ".isAuto"));
+      String puppetName = "Player " + (i + 1);
+      Puppet puppet = new Puppet(this, puppetImage, puppetIsAuto, puppetName);
+
+      addActor(puppet, startLocation);
+      puppets.add(puppet);
+      System.out.println("playerManualMode = " + puppet.isAuto());
     }
-    System.out.println("playerManualMode = " + playerManualMode);
+
   }
 
   void createSnakesLadders(Properties properties) {
@@ -49,25 +62,6 @@ public class GamePane extends GameGrid
     connections.addAll(PropertiesLoader.loadLadders(properties));
   }
 
-  void setNavigationPane(NavigationPane np)
-  {
-    this.np = np;
-  }
-
-  void createPlayerGui()
-  {
-    for (int i = 0; i < numberOfPlayers; i++) {
-      boolean isAuto = playerManualMode.get(i);
-      int spriteImageIndex = i % MAX_PUPPET_SPRITES;
-      String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
-
-      Puppet puppet = new Puppet(this, puppetImage);
-      puppet.setAuto(isAuto);
-      puppet.setPuppetName("Player " + (i + 1));
-      addActor(puppet, startLocation);
-      puppets.add(puppet);
-    }
-  }
 
   Puppet getPuppet()
   {
@@ -130,9 +124,8 @@ public class GamePane extends GameGrid
     return (int)(a * y + b);
   }
 
-  public NavigationPane getNP()
-  {
-    return this.np;
+  public GameSessionManager getGSM() {
+    return gsm;
   }
 
 }

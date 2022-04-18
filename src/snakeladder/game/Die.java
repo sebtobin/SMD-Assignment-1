@@ -1,6 +1,7 @@
 package snakeladder.game;
 
 import ch.aplu.jgamegrid.Actor;
+import snakeladder.utility.ServicesRandom;
 
 public class Die extends Actor
 {

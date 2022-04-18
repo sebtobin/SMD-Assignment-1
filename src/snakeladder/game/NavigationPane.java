@@ -13,21 +13,6 @@ import java.util.Properties;
 public class NavigationPane extends GameGrid
   implements GGButtonListener
 {
-  private class SimulatedPlayer extends Thread
-  {
-    public void run()
-    {
-      while (true)
-      {
-        Monitor.putSleep();
-        handBtn.show(1);
-       roll(getDieValue());
-        delay(1000);
-        handBtn.show(0);
-      }
-    }
-
-  }
 
   private final int DIE1_BUTTON_TAG = 1;
   private final int DIE2_BUTTON_TAG = 2;
@@ -87,11 +72,6 @@ public class NavigationPane extends GameGrid
   NavigationPane(Properties properties)
   {
     this.properties = properties;
-    int numberOfDice =  //Number of six-sided dice
-            (properties.getProperty("dice.count") == null)
-                    ? 1  // default
-                    : Integer.parseInt(properties.getProperty("dice.count"));
-    System.out.println("numberOfDice = " + numberOfDice);
     /*isAuto = Boolean.parseBoolean(properties.getProperty("autorun"));*/
     autoChk = new GGCheckButton("Auto Run", YELLOW, TRANSPARENT, gameSessionIsAuto);
     /*System.out.println("autorun = " + isAuto);*/
@@ -101,10 +81,9 @@ public class NavigationPane extends GameGrid
     setNbHorzCells(200);
     setNbVertCells(600);
     doRun();
-    new SimulatedPlayer().start();
   }
 
-  void setupDieValues() {
+  /*void setupDieValues() {
     for (int i = 0; i < gp.getNumberOfPlayers(); i++) {
       java.util.List<Integer> dieValuesForPlayer = new ArrayList<>();
       if (properties.getProperty("die_values." + i) != null) {
@@ -122,13 +101,12 @@ public class NavigationPane extends GameGrid
       }
     }
     System.out.println("dieValues = " + dieValues);
-  }
+  }*/
 
 
-  void setGamePane(GamePane gp)
+  void setGameSessionManager(GameSessionManager gsm)
   {
-    this.gp = gp;
-    setupDieValues();
+    this.gsm = gsm;
   }
 
   class ManualDieButton implements GGButtonListener {
@@ -149,9 +127,8 @@ public class NavigationPane extends GameGrid
         CustomGGButton customGGButton = (CustomGGButton) ggButton;
         int tag = customGGButton.getTag();
         System.out.println("manual die button clicked - tag: " + tag);
-        /*prepareBeforeRoll();
-        roll(tag);*/
-        gsm.rollDie(tag);
+        prepareBeforeRoll();
+        playDieAnimation(tag);
       }
     }
   }
@@ -172,18 +149,6 @@ public class NavigationPane extends GameGrid
     die5Button.addButtonListener(manualDieButton);
     die6Button.addButtonListener(manualDieButton);
   }
-
-  /*private int getDieValue() {
-    if (dieValues == null) {
-      return RANDOM_ROLL_TAG;
-    }
-    int currentRound = nbRolls / gp.getNumberOfPlayers();
-    int playerIndex = nbRolls % gp.getNumberOfPlayers();
-    if (dieValues.get(playerIndex).size() > currentRound) {
-      return dieValues.get(playerIndex).get(currentRound);
-    }
-    return RANDOM_ROLL_TAG;
-  }*/
 
   void createNPGui(boolean isAuto)
   {
@@ -262,78 +227,11 @@ public class NavigationPane extends GameGrid
     System.out.println("Result: " + text);
   }
 
-  /*void prepareRoll(int currentIndex)
-  {
-    if (currentIndex == 100)  // Game over
-    {
-      playSound(GGSound.FADE);
-      showStatus("Click the hand!");
-      showResult("Game over");
-      isGameOver = true;
-      handBtn.setEnabled(true);
-
-      java.util.List  <String> playerPositions = new ArrayList<>();
-      for (Puppet puppet: gp.getAllPuppets()) {
-        playerPositions.add(puppet.getCellIndex() + "");
-      }
-      gamePlayCallback.finishGameWithResults(nbRolls % gp.getNumberOfPlayers(), playerPositions);
-      gp.resetAllPuppets();
-    }
-    else
-    {
-      playSound(GGSound.CLICK);
-      showStatus("Done. Click the hand!");
-      String result = gp.getPuppet().getPuppetName() + " - pos: " + currentIndex;
-      showResult(result);
-      gp.switchToNextPuppet();
-      // System.out.println("current puppet - auto: " + gp.getPuppet().getPuppetName() + "  " + gp.getPuppet().isAuto() );
-
-      if (isAuto) {
-        Monitor.wakeUp();
-      } else if (gp.getPuppet().isAuto()) {
-        Monitor.wakeUp();
-      } else {
-        handBtn.setEnabled(true);
-      }
-    }
-  }*/
-
-  /*void startMoving(int nb)
-  {
-    showStatus("Moving...");
-    showPips("Pips: " + nb);
-    showScore("# Rolls: " + (++nbRolls));
-    gp.getPuppet().go(nb);
-  }*/
-
-  /*void prepareBeforeRoll() {
-    handBtn.setEnabled(false);
-    if (isGameOver)  // First click after game over
-    {
-      isGameOver = false;
-      nbRolls = 0;
-    }
-  }*/
-
-  /*public void buttonClicked(GGButton btn)
+  public void buttonClicked(GGButton btn)
   {
     System.out.println("hand button clicked");
     prepareBeforeRoll();
-    roll(getDieValue());
-  }*/
-
-  private void roll(int rollNumber)
-  {
-    int nb = rollNumber;
-    if (rollNumber == RANDOM_ROLL_TAG) {
-      nb = ServicesRandom.get().nextInt(6) + 1;
-    }
-    showStatus("Rolling...");
-    showPips("");
-
-    removeActors(Die.class);
-    Die die = new Die(nb, this);
-    addActor(die, dieBoardLocation);
+    playDieAnimation(gsm.rollDice());
   }
 
   public void buttonPressed(GGButton btn)
@@ -342,6 +240,36 @@ public class NavigationPane extends GameGrid
 
   public void buttonReleased(GGButton btn)
   {
+  }
+
+  private void prepareBeforeRoll(){
+    handBtn.setEnabled(false);
+    if (gsm.isGameOver())  // First click after game over
+    {
+      gsm.NewGame();
+    }
+  }
+
+  private void playDieAnimation(int rollNumber) {
+    showStatus("Rolling...");
+    showPips("");
+
+    removeActors(Die.class);
+    Die die = new Die(rollNumber, this);
+    addActor(die, dieBoardLocation);
+  }
+
+  /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
+   *  ticks until the player has finished their movement and reached the goal.  */
+  public void startMoving(int nb)
+  {
+    showStatus("Moving...");
+    showPips("Pips: " + nb);
+
+    gsm.incrementGameNbRolls();
+    showScore("# Rolls: " + (gsm.getNbRolls()));
+
+    gsm.handleMovement(nb);
   }
 
   public void checkAuto() {
