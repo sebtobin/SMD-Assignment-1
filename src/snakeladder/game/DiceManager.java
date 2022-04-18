@@ -32,22 +32,22 @@ public class DiceManager {
         }
         System.out.println("dieValues = " + dieValues);
     }
-    public int getDieValues(int numberOfPlayers, List<Puppet> players) {
+    public int getDieValues(List<Puppet> players, int numberOfPlayers, int nbRolls) {
         if (dieValues == null) {
             return ServicesRandom.get().nextInt(6) + 1;
         }
-        int playerIndex = nbRolls % numberOfPlayers;
-        if (players.get(playerIndex).getNbRollsPuppet() < dieValues.get(playerIndex)){
+        /*int curRound = nbRolls / numberOfPlayers;
+        int curPlayerIndex = nbRolls % numberOfPlayers;
+        if (curRound < players.get(curPlayerIndex).getPlayerDieValues().size()){
             Puppet currPlayer = players.get(playerIndex);
             currPlayer.setNbRollsPuppet(currPlayer.getNbRollsPuppet() + 1);
             return dieValues.get(currPlayer.getNbRollsPuppet() - 1);
-        }
+        }*/
 
         return ServicesRandom.get().nextInt(6) + 1;
     }
 
-    public List<List<Integer>> getDieValues()
-    {
-        return dieValues;
+    public void setNumDice(int numDice) {
+        this.numDice = numDice;
     }
 }

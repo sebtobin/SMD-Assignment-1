@@ -15,7 +15,7 @@ public class GamePane extends GameGrid
   private int numberOfPlayers = 1;
   private int currentPuppetIndex = 0;
   private List<Puppet> puppets =  new ArrayList<>();
-  //private List<Boolean> playerManualMode;
+  private List<Boolean> playerManualMode;
 
   private ArrayList<Connection> connections = new ArrayList<Connection>();
   final Location startLocation = new Location(-1, 9);  // outside grid
@@ -39,6 +39,28 @@ public class GamePane extends GameGrid
 
   void setupPlayers(Properties properties) {
     numberOfPlayers = Integer.parseInt(properties.getProperty("players.count"));
+    playerManualMode = new ArrayList<>();
+    for (int i = 0; i < numberOfPlayers; i++) {
+      playerManualMode.add(Boolean.parseBoolean(properties.getProperty("players." + i + ".isAuto")));
+    }
+    System.out.println("playerManualMode = " + playerManualMode);
+  }
+
+  void createGui(Properties properties)
+  {
+    for (int i = 0; i < numberOfPlayers; i++) {
+      boolean isAuto = playerManualMode.get(i);
+      int spriteImageIndex = i % MAX_PUPPET_SPRITES;
+      String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
+
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, "Player " + (i + 1));
+      addActor(puppet, startLocation);
+      puppets.add(puppet);
+    }
+  }
+
+  /*void setupPlayers(Properties properties) {
+    numberOfPlayers = Integer.parseInt(properties.getProperty("players.count"));
     //playerManualMode = new ArrayList<>();
     for (int i = 0; i < numberOfPlayers; i++) {
       // Create the GUI for each player
@@ -52,16 +74,19 @@ public class GamePane extends GameGrid
 
       addActor(puppet, startLocation);
       puppets.add(puppet);
-      System.out.println("playerManualMode = " + puppet.isAuto());
     }
 
-  }
+  }*/
 
   void createSnakesLadders(Properties properties) {
     connections.addAll(PropertiesLoader.loadSnakes(properties));
     connections.addAll(PropertiesLoader.loadLadders(properties));
   }
 
+  /*void setNavigationPane(NavigationPane np)
+  {
+    this.np = np;
+  }*/
 
   Puppet getPuppet()
   {
@@ -128,6 +153,9 @@ public class GamePane extends GameGrid
     return gsm;
   }
 
+  public void setGsm(GameSessionManager gsm) {
+    this.gsm = gsm;
+  }
 }
 
 

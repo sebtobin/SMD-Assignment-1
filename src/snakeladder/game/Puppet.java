@@ -53,6 +53,10 @@ public class Puppet extends Actor
     }
   }
 
+  public List<Integer> getPlayerDieValues() {
+    return playerDieValues;
+  }
+
   void go(int nbSteps)
   {
     if (cellIndex == 100)  // after game over
@@ -97,6 +101,7 @@ public class Puppet extends Actor
 
   public void act()
   {
+    NavigationPane np = gamePane.getGSM().getNP();
     if ((cellIndex / 10) % 2 == 0)
     {
       if (isHorzMirror())
@@ -125,7 +130,7 @@ public class Puppet extends Actor
         cellIndex = currentCon.cellEnd;
         setLocationOffset(new Point(0, 0));
         currentCon = null;
-        gamePane.getGSM().verifyGameStatus(cellIndex);
+        gamePane.getGSM().getNP().verifyGameStatus(cellIndex);
       }
       return;
     }
@@ -138,7 +143,7 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        gamePane.getGSM().verifyGameStatus(cellIndex);
+        gamePane.getGSM().getNP().verifyGameStatus(cellIndex);
         return;
       }
 
@@ -156,19 +161,19 @@ public class Puppet extends Actor
             dy = -gamePane.animationStep;
           if (currentCon instanceof Snake)
           {
-            gamePane.getGSM().getNP().showStatus("Digesting...");
-            gamePane.getGSM().getNP().playSound(GGSound.MMM);
+            np.showStatus("Digesting...");
+            np.playSound(GGSound.MMM);
           }
           else
           {
-            gamePane.getGSM().getNP().showStatus("Climbing...");
-            gamePane.getGSM().getNP().playSound(GGSound.BOING);
+            np.showStatus("Climbing...");
+            np.playSound(GGSound.BOING);
           }
         }
         else
         {
           setActEnabled(false);
-          gamePane.getGSM().verifyGameStatus(cellIndex);
+          np.verifyGameStatus(cellIndex);
         }
       }
     }

@@ -20,103 +20,37 @@ import java.util.Properties;
  * PlayerSettingPane and vice versa. These dependencies get exponentially confusing to understand. However, with
  * GSM, each GameGrid class simply needs an attribute of GSM (if necessary), and GSM is responsible for handling
  * the coordination of these GameGrid classes when input from the user is given. */
-public class GameSessionManager implements GamePlayCallback{
-
-    private class SimulatedPlayer extends Thread
-    {
-        public void run()
-        {
-            while (true)
-            {
-                Monitor.putSleep();
-                np.getHandBtn().show(1);
-                dm.getDieValues(gp.getNumberOfPlayers(), gp.getAllPuppets());
-                GameGrid.delay(1000);
-                np.getHandBtn().show(0);
-            }
-        }
-
-    }
-
+public class GameSessionManager {
     private NavigationPane np;
     private GamePane gp;
     private DiceManager dm;
 
-    private volatile boolean isGameOver = false;
-    private boolean isAuto;
-
-    private GamePlayCallback gamePlayCallback;
-
-    private int nbRolls = 0;
-
     GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
         this.np = np;
-        this.gp = gp;
-
-        isAuto = Boolean.parseBoolean(properties.getProperty("autorun"));
-        System.out.println("autorun = " + isAuto);
-
-        np.createNPGui(isAuto);
         np.setGsm(this);
-        np.checkAuto();
 
-        gp.setupPlayers(properties);
+        this.gp = gp;
+        gp.setGsm(this);
+
 
         int numberOfDice =  //Number of six-sided dice
                 (properties.getProperty("dice.count") == null)
                         ? 1  // default
                         : Integer.parseInt(properties.getProperty("dice.count"));
         System.out.println("numberOfDice = " + numberOfDice);
+        this.dm = new DiceManager(numberOfDice);
+    }
 
+    void initialiseGameSession(Properties properties) {
+        np.createGui();
+        np.checkAuto();
 
-        dm = new DiceManager(numberOfDice);
+        gp.createGui(properties);
 
         dm.setupInitialDieValues(properties, gp.getAllPuppets(), gp.getNumberOfPlayers());
-
-        new SimulatedPlayer().start();
     }
 
-    /* Formerly prepareRoll, this is placed in GSM because it involves heavy coordination of the system (GSM represents
-     * the system) as well as other elements of the system (GameGrids such as NP and GP). In the case that we choose to
-     * extend the behaviour of the game with some other GameGrid or Actor, then Puppet would still only ever need a
-     * reference to GSM through GamePane instead of having a reference to many different GameGrids or Actors that it
-     * may need to properly function. */
-    public void verifyGameStatus(int currentIndex)
-    {
-        if (currentIndex == 100)  // Game over
-        {
-            np.playSound(GGSound.FADE);
-            np.showStatus("Click the hand!");
-            np.showResult("Game over");
-            isGameOver = true;
-            np.getHandBtn().setEnabled(true);
 
-            java.util.List  <String> playerPositions = new ArrayList<>();
-            for (Puppet puppet: gp.getAllPuppets()) {
-                playerPositions.add(puppet.getCellIndex() + "");
-            }
-            finishGameWithResults(nbRolls % gp.getNumberOfPlayers(), playerPositions);
-            gp.resetAllPuppets();
-        }
-        else
-        {
-            np.playSound(GGSound.CLICK);
-            np.showStatus("Done. Click the hand!");
-            String result = gp.getPuppet().getPuppetName() + " - pos: " + currentIndex;
-            np.showResult(result);
-            gp.switchToNextPuppet();
-            System.out.println("current puppet - auto: " + gp.getPuppet().getPuppetName() +
-                    "  " + gp.getPuppet().isAuto() );
-
-            if (isAuto) {
-                Monitor.wakeUp();
-            } else if (gp.getPuppet().isAuto()) {
-                Monitor.wakeUp();
-            } else {
-                np.getHandBtn().setEnabled(true);
-            }
-        }
-    }
 
     // Any extra movement logic in the future can go here and NP does not need to know about it.
     public void handleMovement(int nb){
@@ -125,23 +59,8 @@ public class GameSessionManager implements GamePlayCallback{
 
     /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
      * for display if necessary. */
-    public int rollDice() {
-        return dm.getDieValues(gp.getNumberOfPlayers(), gp.getAllPuppets());
-    }
-
-
-    public void finishGameWithResults(int winningPlayerIndex, List<String> playerCurrentPositions) {
-        System.out.println("DO NOT CHANGE THIS LINE---WINNING INFORMATION: " + winningPlayerIndex + "-" +
-                String.join(",", playerCurrentPositions));
-    }
-
-    public void NewGame() {
-        isGameOver = false;
-        nbRolls = 0;
-    }
-
-    public void incrementGameNbRolls() {
-        nbRolls = nbRolls++;
+    public int rollDice(int nbRolls) {
+        return dm.getDieValues(gp.getAllPuppets(), gp.getNumberOfPlayers(), nbRolls);
     }
 
     //---- Dice Manager stuff ----
@@ -158,13 +77,6 @@ public class GameSessionManager implements GamePlayCallback{
         return gp;
     }
 
-    public int getNbRolls() {
-        return nbRolls;
-    }
-
-    public boolean isGameOver() {
-        return isGameOver;
-    }
 
 }
 
