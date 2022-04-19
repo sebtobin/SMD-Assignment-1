@@ -1,8 +1,8 @@
 package snakeladder.game;
 
-import ch.aplu.jgamegrid.GameGrid;
 import snakeladder.utility.ServicesRandom;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -13,18 +13,22 @@ public class DiceManager {
     private int numRolls = 0;
     private int total = 0;
 
-    private List<List<Integer>> dieValues = new ArrayList<List<Integer>>();
+    private List<LinkedList<Integer>> dieValues = new ArrayList<>();
 
     public DiceManager(int numDice) {
         this.numDice = numDice;
     }
 
-    public void setupInitialDieValues(Properties properties, List<Puppet> players, int numberOfPlayers) {
+    public void setupInitialDieValues(Properties properties, int numberOfPlayers) {
         for (int i = 0; i < numberOfPlayers; i++) {
             if (properties.getProperty("die_values." + i) != null) {
+                LinkedList<Integer> dieValueForPlayer = new LinkedList<>();
                 String dieValuesString = properties.getProperty("die_values." + i);
                 String[] dieValueStrings = dieValuesString.split(",");
-                players.get(i).setupPlayerDieValues(dieValueStrings);
+                for (String numString : dieValueStrings){
+                    dieValueForPlayer.add(Integer.parseInt(numString));
+                }
+                dieValues.add(dieValueForPlayer);
 
             } else {
                 System.out.println("All players need to be set a die value for the full testing mode to run. " +
@@ -35,16 +39,13 @@ public class DiceManager {
         }
         System.out.println("dieValues = " + dieValues);
     }
-    public int getDieValues(Puppet puppet) {
-        List<Integer> currentPuppetDieValues = puppet.getPlayerDieValues();
+    public int getDieValues(int puppetNum) {
         if (dieValues == null) {
             return ServicesRandom.get().nextInt(6) + 1;
         }
 
-        int presetDieValue = currentPuppetDieValues.get(0);
-        currentPuppetDieValues.remove(0);
-
-        return presetDieValue;
+        return dieValues.get(puppetNum).size() > 0 ? dieValues.get(puppetNum).removeFirst() :
+                ServicesRandom.get().nextInt(6) + 1;
     }
 
     public void registerRoll(int rollValue){

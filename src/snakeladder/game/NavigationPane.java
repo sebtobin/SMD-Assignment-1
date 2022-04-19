@@ -35,7 +35,6 @@ public class NavigationPane extends GameGrid
   private final int DIE4_BUTTON_TAG = 4;
   private final int DIE5_BUTTON_TAG = 5;
   private final int DIE6_BUTTON_TAG = 6;
-  private final int RANDOM_ROLL_TAG = -1;
 
   private final Location handBtnLocation = new Location(110, 70);
   private final Location dieBoardLocation = new Location(100, 180);
@@ -80,14 +79,12 @@ public class NavigationPane extends GameGrid
 
   private int nbRolls = 0;
   private volatile boolean isGameOver = false;
-  private Properties properties;
   private GamePlayCallback gamePlayCallback;
 
   private GameSessionManager gsm;
   private DiceManager dm;
   NavigationPane(Properties properties)
   {
-    this.properties = properties;
     gameSessionIsAuto = Boolean.parseBoolean(properties.getProperty("autorun"));
     autoChk = new GGCheckButton("Auto Run", YELLOW, TRANSPARENT, gameSessionIsAuto);
     System.out.println("autorun = " + gameSessionIsAuto);
@@ -269,7 +266,6 @@ public class NavigationPane extends GameGrid
       gsm.switchToNextPuppet();
       System.out.println("current puppet - auto: " + gsm.getPuppetName() +
               "  " + gsm.puppetIsAuto());
-
       nextRoll();
     }
   }
@@ -314,6 +310,8 @@ public class NavigationPane extends GameGrid
   public void completeRoll(int rollValue){
     playDieAnimation(rollValue);
     dm.registerRoll(rollValue);
+    nbRolls++;
+    showScore("# Rolls: " + (nbRolls));
   }
 
   /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
@@ -323,20 +321,17 @@ public class NavigationPane extends GameGrid
     showStatus("Moving...");
     showPips("Pips: " + nb);
 
-    nbRolls++;
-    showScore("# Rolls: " + (nbRolls));
-
     gsm.handleMovement(nb);
   }
   public boolean checkLastRoll(){
     return dm.getNumRolls() == dm.getNumDice();
   }
   public int rollDice() {
-    return dm.getDieValues(gsm.getPuppet());
+    return dm.getDieValues(gsm.getCurrentPuppetIndex());
   }
 
   void initialiseDiceValues(Properties properties) {
-    dm.setupInitialDieValues(properties, gsm.getAllPuppets(), gsm.getNumberOfPlayers());
+    dm.setupInitialDieValues(properties, gsm.getNumberOfPlayers());
   }
   public void checkAuto() {
     if (gameSessionIsAuto) Monitor.wakeUp();

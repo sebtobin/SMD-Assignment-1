@@ -47,12 +47,6 @@ public class Puppet extends Actor
     this.puppetName = puppetName;
   }
 
-  public void setupPlayerDieValues(String[] dieValueStrings){
-    for (int j = 0; j < dieValueStrings.length; j++) {
-      this.playerDieValues.add(Integer.parseInt(dieValueStrings[j]));
-    }
-  }
-
   public List<Integer> getPlayerDieValues() {
     return playerDieValues;
   }

@@ -98,6 +98,10 @@ public class GameSessionManager {
         gp.switchToNextPuppet();
     }
 
+    public int getCurrentPuppetIndex(){
+        return gp.getCurrentPuppetIndex();
+    }
+
     public boolean puppetIsAuto(){
         return gp.getPuppet().isAuto();
     }
