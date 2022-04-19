@@ -182,6 +182,8 @@ public class Puppet extends Actor
         }
         else
         {
+          // in case min dice roll check occured, reset currentcon to null so no animation is played
+          currentCon = null;
           setActEnabled(false);
           gsm.handleCheckGameStatusRequest(cellIndex);
         }
