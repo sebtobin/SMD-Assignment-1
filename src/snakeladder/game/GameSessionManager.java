@@ -8,18 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/* A facade controller that represents the game system. It is a central class which contains an attribute of all
- * GameGrid objects in the game and is responsible for coordinating the classes of the game in handling user input
- * from NP. This is so that each GameGrid class or other classes that might be in the system can have a single
- * reference (an attribute of this class if absolutely necessary) instead of each of the classes such as GameGrid
- * needing to have an attribute of each other GameGrid.
- *
- * For example, suppose we decide to add a new PlayerSettingPane GameGrid class which requires coordination with
- * GamePane and NavigationPane. Persisting with the original design, GamePane would need to have an attribute of
- * NavigationPane and PlayerSettingPane, NavigationPane would need to have an attribute of GamePane and
- * PlayerSettingPane and vice versa. These dependencies get exponentially confusing to understand. However, with
- * GSM, each GameGrid class simply needs an attribute of GSM (if necessary), and GSM is responsible for handling
- * the coordination of these GameGrid classes when input from the user is given. */
 public class GameSessionManager {
     private NavigationPane np;
     private GamePane gp;
@@ -55,8 +43,7 @@ public class GameSessionManager {
         gp.getPuppet().go(nb);
     }
 
-    /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
-     * for display if necessary. */
+    /* You can remove this. */
     public int rollDice() {
         return dm.getDieValues(gp.getPuppet());
     }

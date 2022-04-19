@@ -43,10 +43,6 @@ public class Puppet extends Actor
     return puppetName;
   }
 
-  public void setPuppetName(String puppetName) {
-    this.puppetName = puppetName;
-  }
-
   public void setupPlayerDieValues(String[] dieValueStrings){
     for (int j = 0; j < dieValueStrings.length; j++) {
       this.playerDieValues.add(Integer.parseInt(dieValueStrings[j]));
@@ -82,6 +78,7 @@ public class Puppet extends Actor
   {
     int tens = cellIndex / 10;
     int ones = cellIndex - tens * 10;
+
     if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
     {
       if (ones == 0 && cellIndex > 0)
@@ -99,8 +96,27 @@ public class Puppet extends Actor
     cellIndex++;
   }
 
-  public void moveBackwards() {
-    cellIndex = cellIndex--;
+  /* Some parts of the code are duplicated from moveToNextCell. This is because implementing moving back in the
+   * same method would require a lot of cascading if else statements which makes the code much less readable and
+   * quite confusing to understand. */
+  public void moveToPreviousCell() {
+    int tens = cellIndex / 10;
+    int ones = cellIndex - tens * 10;
+    if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
+    {
+      if (ones == 0 && cellIndex > 0)
+        setLocation(new Location(getX(), getY() + 1));
+      else
+        setLocation(new Location(getX() - 1, getY()));
+    }
+    else     // Cells starting left 20, 40, .. 100
+    {
+      if (ones == 0)
+        setLocation(new Location(getX(), getY() + 1));
+      else
+        setLocation(new Location(getX() + 1, getY()));
+    }
+    cellIndex--;
   }
 
   public void act()

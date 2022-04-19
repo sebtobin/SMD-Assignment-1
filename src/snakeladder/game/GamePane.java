@@ -124,7 +124,7 @@ public class GamePane extends GameGrid
   public void shiftOtherPuppetsBackwards() {
     for (int i = 0; i < numberOfPlayers; i++) {
       if (i != currentPuppetIndex) {
-        puppets.get(i).moveBackwards();
+        puppets.get(i).moveToPreviousCell();
       }
     }
   }
