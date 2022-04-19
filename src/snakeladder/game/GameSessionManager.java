@@ -56,7 +56,8 @@ public class GameSessionManager {
 
     // Any extra movement logic or method calls to be added in the future can go here and NP does not need to
     // know about it.
-    public void handleMovement(int nb){ 
+    public void handleMovement(int nb, boolean minDiceRoll){
+        gp.getPuppet().setMinDiceRoll(minDiceRoll);
         gp.getPuppet().go(nb);
     }
 

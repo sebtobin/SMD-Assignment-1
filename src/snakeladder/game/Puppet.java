@@ -14,6 +14,7 @@ public class Puppet extends Actor
   private int y;
   private int dy;
   private boolean isAuto;
+  private boolean minDiceRoll;
   private String puppetName;
 
   private List<Integer> playerDieValues;
@@ -45,6 +46,10 @@ public class Puppet extends Actor
 
   public void setPuppetName(String puppetName) {
     this.puppetName = puppetName;
+  }
+
+  public void setMinDiceRoll(boolean minDiceRoll) {
+    this.minDiceRoll = minDiceRoll;
   }
 
   public void setupPlayerDieValues(String[] dieValueStrings){
@@ -160,8 +165,9 @@ public class Puppet extends Actor
           gamePane.shiftOtherPuppetsBackwards();
         }
 
-        // Check if on connection start
-        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null)
+        // Check if on connection start, proceed if not both connection is downward and minimum dice roll was rolled
+        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null &&
+              !(currentCon.locEnd.y < currentCon.locStart.y & minDiceRoll == true))
         {
           gamePane.setSimulationPeriod(50);
           y = gamePane.toPoint(currentCon.locStart).y;
