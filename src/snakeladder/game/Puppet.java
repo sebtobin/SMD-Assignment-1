@@ -43,10 +43,8 @@ public class Puppet extends Actor
     return puppetName;
   }
 
-  public void setupPlayerDieValues(String[] dieValueStrings){
-    for (int j = 0; j < dieValueStrings.length; j++) {
-      this.playerDieValues.add(Integer.parseInt(dieValueStrings[j]));
-    }
+  public void setPuppetName(String puppetName) {
+    this.puppetName = puppetName;
   }
 
   public List<Integer> getPlayerDieValues() {
@@ -86,7 +84,7 @@ public class Puppet extends Actor
       else
         setLocation(new Location(getX() + 1, getY()));
     }
-    else     // Cells starting left 20, 40, .. 100
+    else     // Cells starting right 20, 40, .. 100
     {
       if (ones == 0)
         setLocation(new Location(getX(), getY() - 1));
@@ -102,17 +100,21 @@ public class Puppet extends Actor
   public void moveToPreviousCell() {
     int tens = cellIndex / 10;
     int ones = cellIndex - tens * 10;
-    if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
+    if (tens % 2 == 0)     // Cells starting left 01 (01-10), 21, .. 81
     {
-      if (ones == 0 && cellIndex > 0)
+      // When moving back from a cell like 21, 41 or etc. the player needs to move downwards.
+      if (ones == 1 && cellIndex > 0)
         setLocation(new Location(getX(), getY() + 1));
+      // Otherwise, they move backwards towards the left.
       else
         setLocation(new Location(getX() - 1, getY()));
     }
-    else     // Cells starting left 20, 40, .. 100
+    else     // Cells starting right 20 (20-11), 40, .. 100
     {
-      if (ones == 0)
+      // When moving back from a cell like 11, 31 or etc. the player needs to move downwards.
+      if (ones == 1)
         setLocation(new Location(getX(), getY() + 1));
+      // Otherwise, they move backwards towards the right.
       else
         setLocation(new Location(getX() + 1, getY()));
     }

@@ -36,7 +36,7 @@ public class FrameTutorial extends JFrame
     pack();  // Must be called before actors are added!
     np.createGui();
     gp.createGui();
-    gsm.initialiseDiceValues(properties);
+    np.initialiseDiceValues(properties);
 
     np.checkAuto();
 

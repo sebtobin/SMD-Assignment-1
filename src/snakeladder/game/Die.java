@@ -21,13 +21,7 @@ public class Die extends Actor
     if (getIdVisible() == 6)
     {
       setActEnabled(false);
-      DiceManager dm = np.getGsm().getDm();
-      if (dm.getNumDice() == dm.getNumRolls()){
-        np.startMoving(dm.getTotal());
-        dm.resetValues();
-      } else{
-        np.nextRoll();
-      }
+      np.checkNextRoll();
 
     }
   }
