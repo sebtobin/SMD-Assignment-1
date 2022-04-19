@@ -46,7 +46,7 @@ public class GamePane extends GameGrid
     System.out.println("playerManualMode = " + playerManualMode);
   }
 
-  void createGui(Properties properties)
+  void createGui()
   {
     for (int i = 0; i < numberOfPlayers; i++) {
       boolean isAuto = playerManualMode.get(i);
@@ -183,6 +183,10 @@ public class GamePane extends GameGrid
 
   public void setGsm(GameSessionManager gsm) {
     this.gsm = gsm;
+  }
+
+  public int getCurrentPuppetIndex() {
+    return currentPuppetIndex;
   }
 }
 

@@ -22,7 +22,7 @@ public class NavigationPane extends GameGrid
       {
         Monitor.putSleep();
         handBtn.show(1);
-        completeRoll(gsm.rollDice(nbRolls));
+        completeRoll(gsm.rollDice());
         delay(1000);
         handBtn.show(0);
       }
@@ -227,7 +227,7 @@ public class NavigationPane extends GameGrid
   {
     System.out.println("hand button clicked");
     prepareBeforeRoll();
-    completeRoll(gsm.rollDice(nbRolls));
+    completeRoll(gsm.rollDice());
   }
 
   public void buttonPressed(GGButton btn)

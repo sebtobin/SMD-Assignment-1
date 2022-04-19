@@ -43,12 +43,7 @@ public class GameSessionManager {
         this.dm = new DiceManager(numberOfDice);
     }
 
-    void initialiseGameSession(Properties properties) {
-        np.createGui();
-        np.checkAuto();
-
-        gp.createGui(properties);
-
+    void initialiseDiceValues(Properties properties) {
         dm.setupInitialDieValues(properties, gp.getAllPuppets(), gp.getNumberOfPlayers());
     }
 
@@ -62,8 +57,8 @@ public class GameSessionManager {
 
     /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
      * for display if necessary. */
-    public int rollDice(int nbRolls) {
-        return dm.getDieValues(gp.getAllPuppets(), gp.getNumberOfPlayers(), nbRolls);
+    public int rollDice() {
+        return dm.getDieValues(gp.getPuppet());
     }
 
     public void handleToggle() {
@@ -93,18 +88,14 @@ public class GameSessionManager {
 
     //--------------------------Getters and Setters----------------------------------------
 
-    public NavigationPane getNP() {
-        return np;
-    }
-
     public GamePane getGP() {
         return gp;
     }
+
     public DiceManager getDm()
     {
         return dm;
     }
-
 
 }
 

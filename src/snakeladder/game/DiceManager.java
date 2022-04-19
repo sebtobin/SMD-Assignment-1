@@ -35,20 +35,18 @@ public class DiceManager {
         }
         System.out.println("dieValues = " + dieValues);
     }
-    public int getDieValues(List<Puppet> players, int numberOfPlayers, int nbRolls) {
+    public int getDieValues(Puppet puppet) {
+        List<Integer> currentPuppetDieValues = puppet.getPlayerDieValues();
         if (dieValues == null) {
             return ServicesRandom.get().nextInt(6) + 1;
         }
-        /*int curRound = nbRolls / numberOfPlayers;
-        int curPlayerIndex = nbRolls % numberOfPlayers;
-        if (curRound < players.get(curPlayerIndex).getPlayerDieValues().size()){
-            Puppet currPlayer = players.get(playerIndex);
-            currPlayer.setNbRollsPuppet(currPlayer.getNbRollsPuppet() + 1);
-            return dieValues.get(currPlayer.getNbRollsPuppet() - 1);
-        }*/
 
-        return ServicesRandom.get().nextInt(6) + 1;
+        int presetDieValue = currentPuppetDieValues.get(0);
+        currentPuppetDieValues.remove(0);
+
+        return presetDieValue;
     }
+
     public void registerRoll(int rollValue){
         numRolls++;
         total += rollValue;
