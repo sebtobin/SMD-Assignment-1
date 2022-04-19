@@ -4,7 +4,6 @@ import ch.aplu.jgamegrid.*;
 import java.awt.*;
 import ch.aplu.util.*;
 import snakeladder.game.custom.CustomGGButton;
-import snakeladder.utility.ServicesRandom;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -22,7 +21,7 @@ public class NavigationPane extends GameGrid
       {
         Monitor.putSleep();
         handBtn.show(1);
-        completeRoll(gsm.rollDice());
+        completeRoll(rollDice());
         delay(1000);
         handBtn.show(0);
       }
@@ -58,7 +57,6 @@ public class NavigationPane extends GameGrid
   private final Location die5Location = new Location(140, 270);
   private final Location die6Location = new Location(170, 270);
 
-  private GamePane gp;
   private GGButton handBtn = new GGButton("sprites/handx.gif");
 
   private GGButton die1Button = new CustomGGButton(DIE1_BUTTON_TAG, "sprites/Number_1.png");
@@ -86,7 +84,7 @@ public class NavigationPane extends GameGrid
   private GamePlayCallback gamePlayCallback;
 
   private GameSessionManager gsm;
-
+  private DiceManager dm;
   NavigationPane(Properties properties)
   {
     this.properties = properties;
@@ -100,6 +98,12 @@ public class NavigationPane extends GameGrid
     setNbVertCells(600);
     doRun();
     new SimulatedPlayer().start();
+    int numberOfDice =  //Number of six-sided dice
+            (properties.getProperty("dice.count") == null)
+                    ? 1  // default
+                    : Integer.parseInt(properties.getProperty("dice.count"));
+    System.out.println("numberOfDice = " + numberOfDice);
+    this.dm = new DiceManager(numberOfDice);
   }
 
   void setGamePlayCallback(GamePlayCallback gamePlayCallback) {
@@ -227,7 +231,7 @@ public class NavigationPane extends GameGrid
   {
     System.out.println("hand button clicked");
     prepareBeforeRoll();
-    completeRoll(gsm.rollDice());
+    completeRoll(rollDice());
   }
 
   public void buttonPressed(GGButton btn)
@@ -240,7 +244,6 @@ public class NavigationPane extends GameGrid
 
   public void verifyGameStatus(int currentIndex)
   {
-    gp = gsm.getGP();
     if (currentIndex == 100)  // Game over
     {
       playSound(GGSound.FADE);
@@ -250,22 +253,22 @@ public class NavigationPane extends GameGrid
       handBtn.setEnabled(true);
 
       java.util.List  <String> playerPositions = new ArrayList<>();
-      for (Puppet puppet: gp.getAllPuppets()) {
+      for (Puppet puppet: gsm.getAllPuppets()) {
         playerPositions.add(puppet.getCellIndex() + "");
       }
 
-      gamePlayCallback.finishGameWithResults(nbRolls % gp.getNumberOfPlayers(), playerPositions);
-      gp.resetAllPuppets();
+      gamePlayCallback.finishGameWithResults(nbRolls % gsm.getNumberOfPlayers(), playerPositions);
+      gsm.resetAllPuppets();
     }
     else
     {
       playSound(GGSound.CLICK);
       showStatus("Done. Click the hand!");
-      String result = gp.getPuppet().getPuppetName() + " - pos: " + currentIndex;
+      String result = gsm.getPuppetName() + " - pos: " + currentIndex;
       showResult(result);
-      gp.switchToNextPuppet();
-      System.out.println("current puppet - auto: " + gp.getPuppet().getPuppetName() +
-              "  " + gp.getPuppet().isAuto() );
+      gsm.switchToNextPuppet();
+      System.out.println("current puppet - auto: " + gsm.getPuppetName() +
+              "  " + gsm.puppetIsAuto());
 
       nextRoll();
     }
@@ -292,7 +295,7 @@ public class NavigationPane extends GameGrid
   public void nextRoll(){
     if (gameSessionIsAuto) {
       Monitor.wakeUp();
-    } else if (gp.getPuppet().isAuto()) {
+    } else if (gsm.puppetIsAuto()) {
       Monitor.wakeUp();
     } else {
       handBtn.setEnabled(true);
@@ -300,9 +303,9 @@ public class NavigationPane extends GameGrid
   }
 
   public void checkNextRoll(){
-    if (gsm.checkLastRoll()){
-      startMoving(gsm.getDm().getTotal());
-      gsm.getDm().resetValues();
+    if (checkLastRoll()){
+      startMoving(dm.getTotal());
+      dm.resetValues();
     }else{
       nextRoll();
     }
@@ -310,7 +313,7 @@ public class NavigationPane extends GameGrid
 
   public void completeRoll(int rollValue){
     playDieAnimation(rollValue);
-    gsm.getDm().registerRoll(rollValue);
+    dm.registerRoll(rollValue);
   }
 
   /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
@@ -325,7 +328,16 @@ public class NavigationPane extends GameGrid
 
     gsm.handleMovement(nb);
   }
+  public boolean checkLastRoll(){
+    return dm.getNumRolls() == dm.getNumDice();
+  }
+  public int rollDice() {
+    return dm.getDieValues(gsm.getPuppet());
+  }
 
+  void initialiseDiceValues(Properties properties) {
+    dm.setupInitialDieValues(properties, gsm.getAllPuppets(), gsm.getNumberOfPlayers());
+  }
   public void checkAuto() {
     if (gameSessionIsAuto) Monitor.wakeUp();
   }

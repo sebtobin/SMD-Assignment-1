@@ -1,10 +1,7 @@
 package snakeladder.game;
 
 import ch.aplu.jgamegrid.GGSound;
-import ch.aplu.jgamegrid.GameGrid;
-import ch.aplu.util.Monitor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,7 +22,7 @@ public class GameSessionManager {
     private GamePane gp;
 
 
-    private DiceManager dm;
+
 
     GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
         this.np = np;
@@ -34,17 +31,14 @@ public class GameSessionManager {
         this.gp = gp;
         gp.setGsm(this);
 
-
-        int numberOfDice =  //Number of six-sided dice
-                (properties.getProperty("dice.count") == null)
-                        ? 1  // default
-                        : Integer.parseInt(properties.getProperty("dice.count"));
-        System.out.println("numberOfDice = " + numberOfDice);
-        this.dm = new DiceManager(numberOfDice);
     }
 
-    void initialiseDiceValues(Properties properties) {
-        dm.setupInitialDieValues(properties, gp.getAllPuppets(), gp.getNumberOfPlayers());
+    public List<Puppet> getAllPuppets(){
+        return gp.getAllPuppets();
+    }
+
+    public int getNumberOfPlayers(){
+        return gp.getNumberOfPlayers();
     }
 
     //--------------------------------------Methods called by NP----------------------------------------
@@ -55,15 +49,9 @@ public class GameSessionManager {
         gp.getPuppet().go(nb);
     }
 
-    public boolean checkLastRoll(){
-        return dm.getNumRolls() == dm.getNumDice();
-    }
+
     /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
      * for display if necessary. */
-    public int rollDice() {
-        return dm.getDieValues(gp.getPuppet());
-    }
-
     public void handleToggle() {
         gp.toggleConnection();
     }
@@ -95,9 +83,23 @@ public class GameSessionManager {
         return gp;
     }
 
-    public DiceManager getDm()
-    {
-        return dm;
+    public Puppet getPuppet(){
+        return gp.getPuppet();
+    }
+
+    public void resetAllPuppets(){
+        gp.resetAllPuppets();
+    }
+    public String getPuppetName(){
+        return gp.getPuppet().getPuppetName();
+    }
+
+    public void switchToNextPuppet(){
+        gp.switchToNextPuppet();
+    }
+
+    public boolean puppetIsAuto(){
+        return gp.getPuppet().isAuto();
     }
 
 }
