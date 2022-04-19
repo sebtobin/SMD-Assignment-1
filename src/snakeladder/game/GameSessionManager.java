@@ -55,6 +55,9 @@ public class GameSessionManager {
         gp.getPuppet().go(nb);
     }
 
+    public boolean checkLastRoll(){
+        return dm.getNumRolls() == dm.getNumDice();
+    }
     /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
      * for display if necessary. */
     public int rollDice() {

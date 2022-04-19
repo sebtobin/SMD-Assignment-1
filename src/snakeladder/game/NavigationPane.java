@@ -299,6 +299,15 @@ public class NavigationPane extends GameGrid
     }
   }
 
+  public void checkNextRoll(){
+    if (gsm.checkLastRoll()){
+      startMoving(gsm.getDm().getTotal());
+      gsm.getDm().resetValues();
+    }else{
+      nextRoll();
+    }
+  }
+
   public void completeRoll(int rollValue){
     playDieAnimation(rollValue);
     gsm.getDm().registerRoll(rollValue);
