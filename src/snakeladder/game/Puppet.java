@@ -99,9 +99,13 @@ public class Puppet extends Actor
     cellIndex++;
   }
 
+  public void moveBackwards() {
+    cellIndex = cellIndex--;
+  }
+
   public void act()
   {
-    NavigationPane np = gamePane.getGSM().getNP();
+    GameSessionManager gsm = gamePane.getGSM();
     if ((cellIndex / 10) % 2 == 0)
     {
       if (isHorzMirror())
@@ -130,7 +134,7 @@ public class Puppet extends Actor
         cellIndex = currentCon.cellEnd;
         setLocationOffset(new Point(0, 0));
         currentCon = null;
-        gamePane.getGSM().getNP().verifyGameStatus(cellIndex);
+        gsm.handleCheckGameStatusRequest(cellIndex);
       }
       return;
     }
@@ -143,13 +147,19 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        gamePane.getGSM().getNP().verifyGameStatus(cellIndex);
+        gsm.handleCheckGameStatusRequest(cellIndex);
         return;
       }
 
       nbSteps--;
       if (nbSteps == 0)
       {
+        // After moving via dice roll, the moving puppet stops at this cell and check if any other puppets are on the
+        // same cell. If so, the other puppets are pushed back by one cell.
+        if(gamePane.checkOtherPuppetAtCell(cellIndex)) {
+          gamePane.shiftOtherPuppetsBackwards();
+        }
+
         // Check if on connection start
         if ((currentCon = gamePane.getConnectionAt(getLocation())) != null)
         {
@@ -159,21 +169,15 @@ public class Puppet extends Actor
             dy = gamePane.animationStep;
           else
             dy = -gamePane.animationStep;
-          if (currentCon instanceof Snake)
-          {
-            np.showStatus("Digesting...");
-            np.playSound(GGSound.MMM);
-          }
-          else
-          {
-            np.showStatus("Climbing...");
-            np.playSound(GGSound.BOING);
-          }
+
+          // Instead of Puppet directly telling NavigationPane to output, Puppet goes through GameSessionManager which
+          // masks the implementation of the output as well as NavigationPane from it. Lower coupling is achieved
+          gsm.connectionOutput(currentCon);
         }
         else
         {
           setActEnabled(false);
-          np.verifyGameStatus(cellIndex);
+          gsm.handleCheckGameStatusRequest(cellIndex);
         }
       }
     }

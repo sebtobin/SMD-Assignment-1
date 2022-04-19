@@ -72,15 +72,17 @@ public class NavigationPane extends GameGrid
   private GGTextField statusField;
   private GGTextField resultField;
   private GGTextField scoreField;
+
   private boolean gameSessionIsAuto;
   private GGCheckButton autoChk;
+
   private boolean isToggle = false;
   private GGCheckButton toggleCheck =
           new GGCheckButton("Toggle Mode", YELLOW, TRANSPARENT, isToggle);
+
   private int nbRolls = 0;
   private volatile boolean isGameOver = false;
   private Properties properties;
-  private java.util.List<java.util.List<Integer>> dieValues = new ArrayList<>();
   private GamePlayCallback gamePlayCallback;
 
   private GameSessionManager gsm;
@@ -100,17 +102,8 @@ public class NavigationPane extends GameGrid
     new SimulatedPlayer().start();
   }
 
-  void setGameSessionManager(GameSessionManager gsm)
-  {
-    this.gsm = gsm;
-  }
-
   void setGamePlayCallback(GamePlayCallback gamePlayCallback) {
     this.gamePlayCallback = gamePlayCallback;
-  }
-
-  public GamePlayCallback getGamePlayCallback() {
-    return gamePlayCallback;
   }
 
   class ManualDieButton implements GGButtonListener {
@@ -176,6 +169,7 @@ public class NavigationPane extends GameGrid
       @Override
       public void buttonChecked(GGCheckButton ggCheckButton, boolean checked) {
         isToggle = checked;
+        gsm.handleToggle();
       }
     });
 
@@ -259,7 +253,6 @@ public class NavigationPane extends GameGrid
       for (Puppet puppet: gp.getAllPuppets()) {
         playerPositions.add(puppet.getCellIndex() + "");
       }
-
 
       gamePlayCallback.finishGameWithResults(nbRolls % gp.getNumberOfPlayers(), playerPositions);
       gp.resetAllPuppets();

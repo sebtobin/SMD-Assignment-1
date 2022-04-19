@@ -19,6 +19,16 @@ public abstract class Connection
 
   String imagePath;
 
+  public void reverseStartEnd() {
+    int tmpCell = cellStart;
+    cellStart = cellEnd;
+    cellEnd = tmpCell;
+
+    Location tmpLocation = locStart;
+    locStart = locEnd;
+    locEnd = locStart;
+  }
+
   public Location getLocStart() {
     return locStart;
   }

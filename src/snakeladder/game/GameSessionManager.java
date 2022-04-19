@@ -52,12 +52,11 @@ public class GameSessionManager {
         dm.setupInitialDieValues(properties, gp.getAllPuppets(), gp.getNumberOfPlayers());
     }
 
+    //--------------------------------------Methods called by NP----------------------------------------
+
     // Any extra movement logic or method calls to be added in the future can go here and NP does not need to
     // know about it.
-    public void handleMovement(int nb){
-        if(gp.checkOtherPuppetAtGoalCell(nb)) {
-            nb = nb--;
-        }
+    public void handleMovement(int nb){ 
         gp.getPuppet().go(nb);
     }
 
@@ -65,6 +64,31 @@ public class GameSessionManager {
      * for display if necessary. */
     public int rollDice(int nbRolls) {
         return dm.getDieValues(gp.getAllPuppets(), gp.getNumberOfPlayers(), nbRolls);
+    }
+
+    public void handleToggle() {
+        gp.toggleConnection();
+    }
+
+    //------------------------------------Methods called by Puppet---------------------------------------
+
+    // The method calls to showStatus and playSound are kept here so that NP does not need to know about the Connection
+    // stuff like Snake and Ladders.
+    public void connectionOutput(Connection currentCon) {
+        if (currentCon instanceof Snake)
+        {
+            np.showStatus("Digesting...");
+            np.playSound(GGSound.MMM);
+        }
+        else
+        {
+            np.showStatus("Climbing...");
+            np.playSound(GGSound.BOING);
+        }
+    }
+
+    public void handleCheckGameStatusRequest(int curPuppetCellIndex) {
+        np.verifyGameStatus(curPuppetCellIndex);
     }
 
     //--------------------------Getters and Setters----------------------------------------

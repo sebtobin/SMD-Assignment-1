@@ -96,6 +96,8 @@ public class GamePane extends GameGrid
     return puppets;
   }
 
+
+
   void resetAllPuppets() {
     for (Puppet puppet: puppets) {
       puppet.resetToStartingPoint();
@@ -106,20 +108,35 @@ public class GamePane extends GameGrid
     return numberOfPlayers;
   }
 
-  public boolean checkOtherPuppetAtGoalCell(int nbCellsToMove) {
-    // The goalCell is the cell which the Puppet is trying to move to via dice roll.
-    int goalCell = getPuppet().getCellIndex() + nbCellsToMove;
-
-    /* For each player in the game that is not the current player trying to move, if they are on the goal cell that
-     * the current player trying to move to, then the method returns true. The method returns false otherwise. */
+  public boolean checkOtherPuppetAtCell(int currentCell) {
+    /* For each player in the game that is not the current player trying to move, if they are on the cell that
+     * the current player is trying to move to, then the method returns true. The method returns false otherwise. */
     for(int i = 0; i < numberOfPlayers; i++) {
       if(i != currentPuppetIndex) {
-        if(puppets.get(i).getCellIndex() == goalCell) {
+        if(puppets.get(i).getCellIndex() == currentCell) {
           return true;
         }
       }
     }
     return false;
+  }
+
+  public void shiftOtherPuppetsBackwards() {
+    for (int i = 0; i < numberOfPlayers; i++) {
+      if (i != currentPuppetIndex) {
+        puppets.get(i).moveBackwards();
+      }
+    }
+  }
+
+  public void toggleConnection() {
+    for(int i = 0; i < connections.size(); i++){
+      System.out.println(connections.get(i).cellEnd);
+      System.out.println("reversed");
+      connections.get(i).reverseStartEnd();
+      System.out.println(connections.get(i).cellEnd);
+      System.out.println("---------------------------");
+    }
   }
 
   Connection getConnectionAt(Location loc)
