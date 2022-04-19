@@ -314,7 +314,7 @@ public class NavigationPane extends GameGrid
     nbRolls += gsm.getDm().getNumDice();
     showScore("# Rolls: " + (nbRolls));
 
-    boolean minDiceRoll = nb == gsm.getDm().getNumDice());
+    boolean minDiceRoll = nb == gsm.getDm().getNumDice();
     gsm.handleMovement(nb, minDiceRoll);
   }
 
