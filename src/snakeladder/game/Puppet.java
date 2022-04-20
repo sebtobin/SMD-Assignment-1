@@ -14,6 +14,7 @@ public class Puppet extends Actor
   private int y;
   private int dy;
   private boolean isAuto;
+  private boolean minDiceRoll;
   private String puppetName;
 
   private List<Integer> playerDieValues;
@@ -38,6 +39,10 @@ public class Puppet extends Actor
 
   public String getPuppetName() {
     return puppetName;
+  }
+
+  public void setMinDiceRoll(boolean minDiceRoll) {
+    this.minDiceRoll = minDiceRoll;
   }
 
   void go(int nbSteps)
@@ -172,8 +177,10 @@ public class Puppet extends Actor
           gamePane.shiftOtherPuppetsBackwards();
         }
 
-        // Check if on connection start
-        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null) {
+        // Check if on connection start, proceed if not both connection is downward and minimum dice roll was rolled
+        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null &&
+              !(currentCon.locEnd.y > currentCon.locStart.y && minDiceRoll == true))
+        {
           gamePane.setSimulationPeriod(50);
 
           // Find the y coordinate of the starting location of the connection.
@@ -193,12 +200,12 @@ public class Puppet extends Actor
         }
         else
         {
+          // in case min dice roll check occured, reset currentcon to null so no animation is played
+          currentCon = null;
           setActEnabled(false);
           gsm.handleCheckGameStatusRequest(cellIndex);
         }
       }
     }
   }
-
-
 }
