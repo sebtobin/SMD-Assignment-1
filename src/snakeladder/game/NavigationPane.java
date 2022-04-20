@@ -81,7 +81,7 @@ public class NavigationPane extends GameGrid
   private volatile boolean isGameOver = false;
   private GamePlayCallback gamePlayCallback;
 
-  private GameSessionManager gsm;
+  private SLOPController sc;
   private DiceManager dm;
   NavigationPane(Properties properties)
   {
@@ -170,7 +170,7 @@ public class NavigationPane extends GameGrid
       @Override
       public void buttonChecked(GGCheckButton ggCheckButton, boolean checked) {
         isToggle = checked;
-        gsm.handleToggle();
+        sc.handleToggle();
       }
     });
 
@@ -250,22 +250,22 @@ public class NavigationPane extends GameGrid
       handBtn.setEnabled(true);
 
       java.util.List  <String> playerPositions = new ArrayList<>();
-      for (Puppet puppet: gsm.getAllPuppets()) {
+      for (Puppet puppet: sc.getAllPuppets()) {
         playerPositions.add(puppet.getCellIndex() + "");
       }
 
-      gamePlayCallback.finishGameWithResults(nbRolls % gsm.getNumberOfPlayers(), playerPositions);
-      gsm.resetGame();
+      gamePlayCallback.finishGameWithResults(nbRolls % sc.getNumberOfPlayers(), playerPositions);
+      sc.resetGame();
     }
     else
     {
       playSound(GGSound.CLICK);
       showStatus("Done. Click the hand!");
-      String result = gsm.getPuppetName() + " - pos: " + currentIndex;
+      String result = sc.getPuppetName() + " - pos: " + currentIndex;
       showResult(result);
-      gsm.switchToNextPuppet();
-      System.out.println("current puppet - auto: " + gsm.getPuppetName() +
-              "  " + gsm.puppetIsAuto());
+      sc.switchToNextPuppet();
+      System.out.println("current puppet - auto: " + sc.getPuppetName() +
+              "  " + sc.puppetIsAuto());
       nextRoll();
     }
   }
@@ -291,7 +291,7 @@ public class NavigationPane extends GameGrid
   public void nextRoll(){
     if (gameSessionIsAuto) {
       Monitor.wakeUp();
-    } else if (gsm.puppetIsAuto()) {
+    } else if (sc.puppetIsAuto()) {
       Monitor.wakeUp();
     } else {
       handBtn.setEnabled(true);
@@ -318,40 +318,37 @@ public class NavigationPane extends GameGrid
    *  ticks until the player has finished their movement and reached the goal.  */
   public void startMoving(int nb)
   {
-    if (gsm.toggleStrategy(dm.getNumDice())) {
-      isToggle = !isToggle;
-      toggleCheck.setChecked(isToggle);
-      gsm.handleToggle();
-    }
-
     showStatus("Moving...");
     showPips("Pips: " + nb);
 
     boolean minDiceRoll = (nb == dm.getNumDice());
-    gsm.handleMovement(nb, minDiceRoll);
+    sc.handleMovement(nb, minDiceRoll);
+
+    // Determine toggle strategy after moving to minimise advantage of opponents
+    if (sc.toggleStrategy(dm.getNumDice())) {
+      isToggle = !isToggle;
+      toggleCheck.setChecked(isToggle);
+      sc.handleToggle();
+    }
   }
 
   public boolean checkLastRoll(){
     return dm.getNumRolls() == dm.getNumDice();
   }
   public int rollDice() {
-    return dm.getDieValues(gsm.fetchCurrentPuppetNumber());
+    return dm.getDieValues(sc.fetchCurrentPuppetNumber());
   }
 
   void initialiseDiceValues(Properties properties) {
-    dm.setupInitialDieValues(properties, gsm.getNumberOfPlayers());
+    dm.setupInitialDieValues(properties, sc.getNumberOfPlayers());
   }
 
   public void checkAuto() {
     if (gameSessionIsAuto) Monitor.wakeUp();
   }
 
-  public void setGsm(GameSessionManager gsm) {
-    this.gsm = gsm;
-  }
-  public GameSessionManager getGsm()
-  {
-    return gsm;
+  public void setSC(SLOPController sc) {
+    this.sc = sc;
   }
 
 }

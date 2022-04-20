@@ -24,7 +24,7 @@ public class FrameTutorial extends JFrame
     getContentPane().add(gp, BorderLayout.WEST);
     NavigationPane np = new NavigationPane(properties);
     getContentPane().add(np, BorderLayout.EAST);
-    GameSessionManager gsm = new GameSessionManager(properties, np, gp);
+    SLOPController sc = new SLOPController(properties, np, gp);
     np.setGamePlayCallback(new GamePlayCallback() {
       @Override
       public void finishGameWithResults(int winningPlayerIndex, List<String> playerCurrentPositions) {

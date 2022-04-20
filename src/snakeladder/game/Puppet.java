@@ -121,7 +121,7 @@ public class Puppet extends Actor
 
   public void act()
   {
-    GameSessionManager gsm = gamePane.getGSM();
+    SLOPController sc = gamePane.getSC();
     if ((cellIndex / 10) % 2 == 0)
     {
       if (isHorzMirror())
@@ -150,7 +150,7 @@ public class Puppet extends Actor
         cellIndex = currentCon.cellEnd;
         setLocationOffset(new Point(0, 0));
         currentCon = null;
-        gsm.handleCheckGameStatusRequest(cellIndex);
+        sc.handleCheckGameStatusRequest(cellIndex);
       }
       return;
     }
@@ -163,7 +163,7 @@ public class Puppet extends Actor
       if (cellIndex == 100)  // Game over
       {
         setActEnabled(false);
-        gsm.handleCheckGameStatusRequest(cellIndex);
+        sc.handleCheckGameStatusRequest(cellIndex);
         return;
       }
 
@@ -196,14 +196,14 @@ public class Puppet extends Actor
 
           // Instead of Puppet directly telling NavigationPane to output, Puppet goes through GameSessionManager which
           // masks the implementation of the output as well as NavigationPane from it. Lower coupling is achieved
-          gsm.connectionOutput(currentCon);
+          sc.connectionOutput(currentCon);
         }
         else
         {
           // in case min dice roll check occured, reset currentcon to null so no animation is played
           currentCon = null;
           setActEnabled(false);
-          gsm.handleCheckGameStatusRequest(cellIndex);
+          sc.handleCheckGameStatusRequest(cellIndex);
         }
       }
     }

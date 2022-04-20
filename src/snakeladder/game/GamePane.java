@@ -10,7 +10,7 @@ import java.util.Properties;
 @SuppressWarnings("serial")
 public class GamePane extends GameGrid
 {
-  private GameSessionManager gsm;
+  private SLOPController sc;
 
   private int numberOfPlayers = 1;
   private int currentPuppetIndex = 0;
@@ -64,17 +64,8 @@ public class GamePane extends GameGrid
     connections.addAll(PropertiesLoader.loadLadders(properties));
   }
 
-  Puppet getPuppet()
-  {
-    return puppets.get(currentPuppetIndex);
-  }
-
   void switchToNextPuppet() {
     currentPuppetIndex = (currentPuppetIndex + 1) % numberOfPlayers;
-  }
-
-  List<Puppet> getAllPuppets() {
-    return puppets;
   }
 
   void resetAllPuppets() {
@@ -83,11 +74,45 @@ public class GamePane extends GameGrid
     }
   }
 
-  public int getNumberOfPlayers() {
-    return numberOfPlayers;
+  Connection getConnectionAt(Location loc)
+  {
+    for (Connection con : connections)
+      if (con.locStart.equals(loc))
+        return con;
+    return null;
   }
 
-  public boolean checkOtherPuppetAtCell(int currentCell) {
+  static Location cellToLocation(int cellIndex)
+  {
+    int index = cellIndex - 1;  // 0..99
+
+    int tens = index / NUMBER_HORIZONTAL_CELLS;
+    int ones = index - tens * NUMBER_HORIZONTAL_CELLS;
+
+    int y = 9 - tens;
+    int x;
+
+    if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
+      x = ones;
+    else     // Cells starting left 20, 40, .. 100
+      x = 9 - ones;
+
+    return new Location(x, y);
+  }
+
+  int x(int y, Connection con)
+  {
+    int x0 = toPoint(con.locStart).x;
+    int y0 = toPoint(con.locStart).y;
+    int x1 = toPoint(con.locEnd).x;
+    int y1 = toPoint(con.locEnd).y;
+    // Assumption y1 != y0
+    double a = (double)(x1 - x0) / (y1 - y0);
+    double b = (double)(y1 * x0 - y0 * x1) / (y1 - y0);
+    return (int)(a * y + b);
+  }
+
+  boolean checkOtherPuppetAtCell(int currentCell) {
     /* For each player in the game that is not the current player trying to move, if they are on the cell that
      * the current player is trying to move to, then the method returns true. The method returns false otherwise. */
     for(int i = 0; i < numberOfPlayers; i++) {
@@ -100,7 +125,7 @@ public class GamePane extends GameGrid
     return false;
   }
 
-  public void shiftOtherPuppetsBackwards() {
+  void shiftOtherPuppetsBackwards() {
     for (int i = 0; i < numberOfPlayers; i++) {
       if (i != currentPuppetIndex) {
         puppets.get(i).moveToPreviousCell();
@@ -108,13 +133,13 @@ public class GamePane extends GameGrid
     }
   }
 
-  public void toggleConnection() {
+  void toggleConnection() {
     for(int i = 0; i < connections.size(); i++){
       connections.get(i).reverseStartEnd();
     }
   }
 
-  public boolean moreUpwardsConnections(int numDice) {
+  boolean moreUpwardsConnections(int numDice) {
     int lowestPossibleRoll = numDice * 1, highestPossibleRoll = numDice * 6;
     int lowestPossibleCell, highestPossibleCell;
 
@@ -152,54 +177,29 @@ public class GamePane extends GameGrid
     }
   }
 
-  Connection getConnectionAt(Location loc)
-  {
-    for (Connection con : connections)
-      if (con.locStart.equals(loc))
-        return con;
-    return null;
+  SLOPController getSC() {
+    return sc;
   }
 
-  static Location cellToLocation(int cellIndex)
-  {
-    int index = cellIndex - 1;  // 0..99
-
-    int tens = index / NUMBER_HORIZONTAL_CELLS;
-    int ones = index - tens * NUMBER_HORIZONTAL_CELLS;
-
-    int y = 9 - tens;
-    int x;
-
-    if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
-      x = ones;
-    else     // Cells starting left 20, 40, .. 100
-      x = 9 - ones;
-
-    return new Location(x, y);
-  }
-  
-  int x(int y, Connection con)
-  {
-    int x0 = toPoint(con.locStart).x;
-    int y0 = toPoint(con.locStart).y;
-    int x1 = toPoint(con.locEnd).x;
-    int y1 = toPoint(con.locEnd).y;
-    // Assumption y1 != y0
-    double a = (double)(x1 - x0) / (y1 - y0);
-    double b = (double)(y1 * x0 - y0 * x1) / (y1 - y0);
-    return (int)(a * y + b);
+  void setSC(SLOPController sc) {
+    this.sc = sc;
   }
 
-  public GameSessionManager getGSM() {
-    return gsm;
-  }
-
-  public void setGsm(GameSessionManager gsm) {
-    this.gsm = gsm;
-  }
-
-  public int getCurrentPuppetIndex() {
+  int getCurrentPuppetIndex() {
     return currentPuppetIndex;
+  }
+
+  Puppet getPuppet()
+  {
+    return puppets.get(currentPuppetIndex);
+  }
+
+  List<Puppet> getAllPuppets() {
+    return puppets;
+  }
+
+  public int getNumberOfPlayers() {
+    return numberOfPlayers;
   }
 }
 

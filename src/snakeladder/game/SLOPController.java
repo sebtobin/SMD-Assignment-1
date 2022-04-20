@@ -15,18 +15,18 @@ import java.util.Properties;
  * GamePane and NavigationPane. Persisting with the original design, GamePane would need to have an attribute of
  * NavigationPane and PlayerSettingPane, NavigationPane would need to have an attribute of GamePane and
  * PlayerSettingPane and vice versa. These dependencies get exponentially confusing to understand. However, with
- * GSM, each GameGrid class simply needs an attribute of GSM (if necessary), and GSM is responsible for handling
+ * sc, each GameGrid class simply needs an attribute of sc (if necessary), and sc is responsible for handling
  * the coordination of these GameGrid classes when input from the user is given. */
-public class GameSessionManager {
+public class SLOPController {
     private NavigationPane np;
     private GamePane gp;
 
-    GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
+    SLOPController(Properties properties, NavigationPane np, GamePane gp) {
         this.np = np;
-        np.setGsm(this);
+        np.setSC(this);
 
         this.gp = gp;
-        gp.setGsm(this);
+        gp.setSC(this);
 
     }
 
@@ -47,7 +47,7 @@ public class GameSessionManager {
         gp.getPuppet().go(nb);
     }
 
-    /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
+    /* NavigationPane doesn't care how the dice is rolled, it just tells sc to handle it and give NP back information
      * for display if necessary. */
     public void handleToggle() {
         gp.toggleConnection();
