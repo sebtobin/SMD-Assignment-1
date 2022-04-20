@@ -59,25 +59,6 @@ public class GamePane extends GameGrid
     }
   }
 
-  /*void setupPlayers(Properties properties) {
-    numberOfPlayers = Integer.parseInt(properties.getProperty("players.count"));
-    //playerManualMode = new ArrayList<>();
-    for (int i = 0; i < numberOfPlayers; i++) {
-      // Create the GUI for each player
-      int spriteImageIndex = i % MAX_PUPPET_SPRITES;
-      String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
-
-      // Create the player itself
-      boolean puppetIsAuto = Boolean.parseBoolean(properties.getProperty("players." + i + ".isAuto"));
-      String puppetName = "Player " + (i + 1);
-      Puppet puppet = new Puppet(this, puppetImage, puppetIsAuto, puppetName);
-
-      addActor(puppet, startLocation);
-      puppets.add(puppet);
-    }
-
-  }*/
-
   void createSnakesLadders(Properties properties) {
     connections.addAll(PropertiesLoader.loadSnakes(properties));
     connections.addAll(PropertiesLoader.loadLadders(properties));
@@ -95,8 +76,6 @@ public class GamePane extends GameGrid
   List<Puppet> getAllPuppets() {
     return puppets;
   }
-
-
 
   void resetAllPuppets() {
     for (Puppet puppet: puppets) {
