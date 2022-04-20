@@ -327,12 +327,10 @@ public class NavigationPane extends GameGrid
     showStatus("Moving...");
     showPips("Pips: " + nb);
 
-    nbRolls += dm.getNumDice();
-    showScore("# Rolls: " + (nbRolls));
-
-    boolean minDiceRoll = nb == dm.getNumDice();
+    boolean minDiceRoll = (nb == dm.getNumDice());
     gsm.handleMovement(nb, minDiceRoll);
   }
+
   public boolean checkLastRoll(){
     return dm.getNumRolls() == dm.getNumDice();
   }
