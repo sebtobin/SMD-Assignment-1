@@ -45,8 +45,9 @@ public class Puppet extends Actor
     this.minDiceRoll = minDiceRoll;
   }
 
-  void go(int nbSteps)
+  void go(int nbSteps, boolean mindDiceRoll)
   {
+    this.minDiceRoll = mindDiceRoll;
     if (cellIndex == 100)  // after game over
     {
       cellIndex = 0;

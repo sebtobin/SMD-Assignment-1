@@ -43,8 +43,7 @@ public class SLOPController {
     // Any extra movement logic or method calls to be added in the future can go here and NP does not need to
     // know about it.
     public void handleMovement(int nb, boolean minDiceRoll){
-        gp.getPuppet().setMinDiceRoll(minDiceRoll);
-        gp.getPuppet().go(nb);
+        gp.getPuppet().go(nb, minDiceRoll);
     }
 
     /* NavigationPane doesn't care how the dice is rolled, it just tells sc to handle it and give NP back information
