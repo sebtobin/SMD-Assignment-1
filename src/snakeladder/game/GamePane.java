@@ -131,11 +131,7 @@ public class GamePane extends GameGrid
 
   public void toggleConnection() {
     for(int i = 0; i < connections.size(); i++){
-      System.out.println(connections.get(i).cellEnd);
-      System.out.println("reversed");
       connections.get(i).reverseStartEnd();
-      System.out.println(connections.get(i).cellEnd);
-      System.out.println("---------------------------");
     }
   }
 

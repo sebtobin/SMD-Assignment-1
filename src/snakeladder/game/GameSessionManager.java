@@ -21,9 +21,6 @@ public class GameSessionManager {
     private NavigationPane np;
     private GamePane gp;
 
-
-
-
     GameSessionManager(Properties properties, NavigationPane np, GamePane gp) {
         this.np = np;
         np.setGsm(this);
@@ -48,7 +45,6 @@ public class GameSessionManager {
     public void handleMovement(int nb){
         gp.getPuppet().go(nb);
     }
-
 
     /* NavigationPane doesn't care how the dice is rolled, it just tells GSM to handle it and give NP back information
      * for display if necessary. */
@@ -79,17 +75,10 @@ public class GameSessionManager {
 
     //--------------------------Getters and Setters----------------------------------------
 
-    public GamePane getGP() {
-        return gp;
-    }
-
-    public Puppet getPuppet(){
-        return gp.getPuppet();
-    }
-
-    public void resetAllPuppets(){
+    public void resetGame(){
         gp.resetAllPuppets();
     }
+
     public String getPuppetName(){
         return gp.getPuppet().getPuppetName();
     }
@@ -98,7 +87,7 @@ public class GameSessionManager {
         gp.switchToNextPuppet();
     }
 
-    public int getCurrentPuppetIndex(){
+    public int fetchCurrentPuppetNumber(){
         return gp.getCurrentPuppetIndex();
     }
 

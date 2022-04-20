@@ -255,7 +255,7 @@ public class NavigationPane extends GameGrid
       }
 
       gamePlayCallback.finishGameWithResults(nbRolls % gsm.getNumberOfPlayers(), playerPositions);
-      gsm.resetAllPuppets();
+      gsm.resetGame();
     }
     else
     {
@@ -327,12 +327,13 @@ public class NavigationPane extends GameGrid
     return dm.getNumRolls() == dm.getNumDice();
   }
   public int rollDice() {
-    return dm.getDieValues(gsm.getCurrentPuppetIndex());
+    return dm.getDieValues(gsm.fetchCurrentPuppetNumber());
   }
 
   void initialiseDiceValues(Properties properties) {
     dm.setupInitialDieValues(properties, gsm.getNumberOfPlayers());
   }
+
   public void checkAuto() {
     if (gameSessionIsAuto) Monitor.wakeUp();
   }

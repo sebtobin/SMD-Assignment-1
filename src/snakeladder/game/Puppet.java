@@ -18,9 +18,6 @@ public class Puppet extends Actor
 
   private List<Integer> playerDieValues;
 
-  // The number of rolls this Puppet object has had in the game.
-  private int nbRollsPuppet = 0;
-
   Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName)
   {
     super(puppetImage);
@@ -41,14 +38,6 @@ public class Puppet extends Actor
 
   public String getPuppetName() {
     return puppetName;
-  }
-
-  public void setPuppetName(String puppetName) {
-    this.puppetName = puppetName;
-  }
-
-  public List<Integer> getPlayerDieValues() {
-    return playerDieValues;
   }
 
   void go(int nbSteps)
@@ -72,6 +61,10 @@ public class Puppet extends Actor
     return cellIndex;
   }
 
+  /* Puppet does its own Location arithmetic instead of using GamePane's static cellToLocation method so that it can
+   * calculate Location independently and is not more tightly coupled with GamePane and reliant on its static method.
+   * GamePane's cellToLocation method is used in the construction of Connection objects which we have no access to.
+   * With this decision, if GamePane's cellToLocation method is modified */
   private void moveToNextCell()
   {
     int tens = cellIndex / 10;
@@ -179,14 +172,19 @@ public class Puppet extends Actor
         }
 
         // Check if on connection start
-        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null)
-        {
+        if ((currentCon = gamePane.getConnectionAt(getLocation())) != null) {
           gamePane.setSimulationPeriod(50);
+
+          // Find the y coordinate of the starting location of the connection.
           y = gamePane.toPoint(currentCon.locStart).y;
-          if (currentCon.locEnd.y > currentCon.locStart.y)
+
+          // Larger y-coordinate means downwards. If the end location of the connection is downwards.
+          if (currentCon.locEnd.y > currentCon.locStart.y) {
             dy = gamePane.animationStep;
-          else
+          // If the end location of the connection is upwards.
+          } else {
             dy = -gamePane.animationStep;
+          }
 
           // Instead of Puppet directly telling NavigationPane to output, Puppet goes through GameSessionManager which
           // masks the implementation of the output as well as NavigationPane from it. Lower coupling is achieved

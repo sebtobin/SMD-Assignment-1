@@ -26,7 +26,7 @@ public abstract class Connection
 
     Location tmpLocation = locStart;
     locStart = locEnd;
-    locEnd = locStart;
+    locEnd = tmpLocation;
   }
 
   public Location getLocStart() {
