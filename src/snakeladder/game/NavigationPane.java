@@ -318,6 +318,12 @@ public class NavigationPane extends GameGrid
    *  ticks until the player has finished their movement and reached the goal.  */
   public void startMoving(int nb)
   {
+    if (gsm.toggleStrategy(dm.getNumDice())) {
+      isToggle = !isToggle;
+      toggleCheck.setChecked(isToggle);
+      gsm.handleToggle();
+    }
+
     showStatus("Moving...");
     showPips("Pips: " + nb);
 

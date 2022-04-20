@@ -29,6 +29,14 @@ public abstract class Connection
     locEnd = tmpLocation;
   }
 
+  public int getCellStart() {
+    return cellStart;
+  }
+
+  public int getCellEnd() {
+    return cellEnd;
+  }
+
   public Location getLocStart() {
     return locStart;
   }

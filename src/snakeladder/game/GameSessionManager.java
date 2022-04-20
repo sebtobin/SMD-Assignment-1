@@ -52,6 +52,16 @@ public class GameSessionManager {
         gp.toggleConnection();
     }
 
+    /* NERDI can make changes to the strategy here easily, even if it involves the use of some other classes
+     * like other game entities or panes. */
+    public boolean toggleStrategy(int numDice) {
+        if(gp.moreUpwardsConnections(numDice)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //------------------------------------Methods called by Puppet---------------------------------------
 
     // The method calls to showStatus and playSound are kept here so that NP does not need to know about the Connection

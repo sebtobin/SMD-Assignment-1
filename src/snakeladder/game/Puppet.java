@@ -165,8 +165,9 @@ public class Puppet extends Actor
       nbSteps--;
       if (nbSteps == 0)
       {
-        // After moving via dice roll, the moving puppet stops at this cell and check if any other puppets are on the
-        // same cell. If so, the other puppets are pushed back by one cell.
+        /* After moving via dice roll, the moving puppet stops at this cell and check if any other puppets are on the
+         * same cell. If so, the other puppets are pushed back by one cell. This does method calls to GamePane, but we
+         * have no choice because we don't have access to the calling context of act(). */
         if(gamePane.checkOtherPuppetAtCell(cellIndex)) {
           gamePane.shiftOtherPuppetsBackwards();
         }
