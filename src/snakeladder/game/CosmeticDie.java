@@ -1,14 +1,13 @@
 package snakeladder.game;
 
 import ch.aplu.jgamegrid.Actor;
-import snakeladder.utility.ServicesRandom;
 
-public class Die extends Actor
+public class CosmeticDie extends Actor
 {
   private NavigationPane np;
   private int nb;
 
-  Die(int nb, NavigationPane np)
+  CosmeticDie(int nb, NavigationPane np)
   {
     super("sprites/pips" + nb + ".gif", 7);
     this.nb = nb;
@@ -22,7 +21,6 @@ public class Die extends Actor
     {
       setActEnabled(false);
       np.checkNextRoll();
-
     }
   }
 

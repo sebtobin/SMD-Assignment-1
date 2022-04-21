@@ -1,12 +1,13 @@
 package snakeladder.game;
 
 import snakeladder.utility.ServicesRandom;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-public class DiceManager {
+public class DiceRoller {
 
     int numDice;
 
@@ -15,7 +16,7 @@ public class DiceManager {
 
     private List<LinkedList<Integer>> dieValues = new ArrayList<>();
 
-    public DiceManager(int numDice) {
+    public DiceRoller(int numDice) {
         this.numDice = numDice;
     }
 
@@ -25,7 +26,7 @@ public class DiceManager {
                 LinkedList<Integer> dieValueForPlayer = new LinkedList<>();
                 String dieValuesString = properties.getProperty("die_values." + i);
                 String[] dieValueStrings = dieValuesString.split(",");
-                for (String numString : dieValueStrings){
+                for (String numString : dieValueStrings) {
                     dieValueForPlayer.add(Integer.parseInt(numString));
                 }
                 dieValues.add(dieValueForPlayer);
@@ -39,6 +40,7 @@ public class DiceManager {
         }
         System.out.println("dieValues = " + dieValues);
     }
+
     public int getDieValues(int puppetNum) {
         if (dieValues == null) {
             return ServicesRandom.get().nextInt(6) + 1;
@@ -48,40 +50,37 @@ public class DiceManager {
                 ServicesRandom.get().nextInt(6) + 1;
     }
 
-    public void registerRoll(int rollValue){
+    public void registerRoll(int rollValue) {
         numRolls++;
         total += rollValue;
     }
 
-    public void resetValues(){
+    public void resetValues() {
         numRolls = 0;
         total = 0;
     }
+
     public void setNumDice(int numDice) {
         this.numDice = numDice;
     }
-    public int getNumDice()
-    {
+
+    public int getNumDice() {
         return numDice;
     }
 
-    public int getNumRolls()
-    {
+    public int getNumRolls() {
         return numRolls;
     }
 
-    public void setNumRolls(int numRolls)
-    {
+    public void setNumRolls(int numRolls) {
         this.numRolls = numRolls;
     }
 
-    public int getTotal()
-    {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(int total)
-    {
+    public void setTotal(int total) {
         this.total = total;
     }
 }

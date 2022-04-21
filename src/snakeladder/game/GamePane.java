@@ -202,6 +202,14 @@ public class GamePane extends GameGrid
   public int getNumberOfPlayers() {
     return numberOfPlayers;
   }
+
+  List<String> getAllPuppetPositions(){
+    List<String> playerPositions = new ArrayList<>();
+    for(Puppet puppet: getAllPuppets()) {
+      playerPositions.add(puppet.getCellIndex() + "");
+    }
+    return playerPositions;
+  }
 }
 
 

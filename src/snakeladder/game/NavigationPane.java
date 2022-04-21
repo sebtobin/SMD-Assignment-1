@@ -82,7 +82,7 @@ public class NavigationPane extends GameGrid
   private GamePlayCallback gamePlayCallback;
 
   private SLOPController sc;
-  private DiceManager dm;
+  private DiceRoller dr;
   NavigationPane(Properties properties)
   {
     gameSessionIsAuto = Boolean.parseBoolean(properties.getProperty("autorun"));
@@ -100,7 +100,7 @@ public class NavigationPane extends GameGrid
                     ? 1  // default
                     : Integer.parseInt(properties.getProperty("dice.count"));
     System.out.println("numberOfDice = " + numberOfDice);
-    this.dm = new DiceManager(numberOfDice);
+    this.dr = new DiceRoller(numberOfDice);
   }
 
   void setGamePlayCallback(GamePlayCallback gamePlayCallback) {
@@ -258,11 +258,11 @@ public class NavigationPane extends GameGrid
     {
       playSound(GGSound.CLICK);
       showStatus("Done. Click the hand!");
-      String result = sc.getPuppetName() + " - pos: " + currentIndex;
+      String result = sc.fetchCurrentPuppetName() + " - pos: " + currentIndex;
       showResult(result);
       sc.switchToNextPuppet();
-      System.out.println("current puppet - auto: " + sc.getPuppetName() +
-              "  " + sc.puppetIsAuto());
+      /*System.out.println("current puppet - auto: " + sc.fetchCurrentPuppetName() +
+              "  " + sc.fetchCurrentPuppetIsAuto());*/
       nextRoll();
     }
   }
@@ -280,15 +280,15 @@ public class NavigationPane extends GameGrid
     showStatus("Rolling...");
     showPips("");
 
-    removeActors(Die.class);
-    Die die = new Die(rollNumber, this);
-    addActor(die, dieBoardLocation);
+    removeActors(CosmeticDie.class);
+    CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this);
+    addActor(cosmeticDie, dieBoardLocation);
   }
 
   public void nextRoll(){
     if (gameSessionIsAuto) {
       Monitor.wakeUp();
-    } else if (sc.puppetIsAuto()) {
+    } else if (sc.fetchCurrentPuppetIsAuto()) {
       Monitor.wakeUp();
     } else {
       handBtn.setEnabled(true);
@@ -297,8 +297,8 @@ public class NavigationPane extends GameGrid
 
   public void checkNextRoll(){
     if (checkLastRoll()){
-      startMoving(dm.getTotal());
-      dm.resetValues();
+      startMoving(dr.getTotal());
+      dr.resetValues();
     }else{
       nextRoll();
     }
@@ -306,7 +306,7 @@ public class NavigationPane extends GameGrid
 
   public void completeRoll(int rollValue){
     playDieAnimation(rollValue);
-    dm.registerRoll(rollValue);
+    dr.registerRoll(rollValue);
     nbRolls++;
     showScore("# Rolls: " + (nbRolls));
   }
@@ -318,11 +318,11 @@ public class NavigationPane extends GameGrid
     showStatus("Moving...");
     showPips("Pips: " + nb);
 
-    boolean minDiceRoll = (nb == dm.getNumDice());
+    boolean minDiceRoll = (nb == dr.getNumDice());
     sc.handleMovement(nb, minDiceRoll);
 
     // Determine toggle strategy after moving to minimise advantage of opponents
-    if (sc.toggleStrategy(dm.getNumDice())) {
+    if (sc.toggleStrategy(dr.getNumDice())) {
       isToggle = !isToggle;
       toggleCheck.setChecked(isToggle);
       sc.handleToggle();
@@ -330,14 +330,14 @@ public class NavigationPane extends GameGrid
   }
 
   public boolean checkLastRoll(){
-    return dm.getNumRolls() == dm.getNumDice();
+    return dr.getNumRolls() == dr.getNumDice();
   }
   public int rollDice() {
-    return dm.getDieValues(sc.fetchCurrentPuppetNumber());
+    return dr.getDieValues(sc.fetchCurrentPuppetNumber());
   }
 
   void initialiseDiceValues(Properties properties) {
-    dm.setupInitialDieValues(properties, sc.fetchPlayerNumber());
+    dr.setupInitialDieValues(properties, sc.fetchPlayerNumber());
   }
 
   public void checkAuto() {

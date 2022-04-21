@@ -10,7 +10,7 @@ public class SLOPController {
     private NavigationPane np;
     private GamePane gp;
 
-    SLOPController(Properties properties, NavigationPane np, GamePane gp) {
+    SLOPController(NavigationPane np, GamePane gp) {
         this.np = np;
         np.setSC(this);
 
@@ -23,19 +23,19 @@ public class SLOPController {
 
     // Any extra movement logic or method calls to be added in the future can go here and NP does not need to
     // know about it.
-    public void handleMovement(int nb, boolean minDiceRoll){
+    void handleMovement(int nb, boolean minDiceRoll){
         gp.getPuppet().go(nb, minDiceRoll);
     }
 
     /* NavigationPane doesn't care how the dice is rolled, it just tells sc to handle it and give NP back information
      * for display if necessary. */
-    public void handleToggle() {
+    void handleToggle() {
         gp.toggleConnection();
     }
 
     /* NERDI can make changes to the strategy here easily, even if it involves the use of some other classes
      * like other game entities or panes. */
-    public boolean toggleStrategy(int numDice) {
+    boolean toggleStrategy(int numDice) {
         if(gp.moreUpwardsConnections(numDice)){
             return true;
         } else {
@@ -43,11 +43,11 @@ public class SLOPController {
         }
     }
 
-    public void resetGame(){
+    void resetGame(){
         gp.resetAllPuppets();
     }
 
-    public void switchToNextPuppet(){
+    void switchToNextPuppet(){
         gp.switchToNextPuppet();
     }
 
@@ -55,7 +55,7 @@ public class SLOPController {
 
     // The method calls to showStatus and playSound are kept here so that NP does not need to know about the Connection
     // stuff like Snake and Ladders.
-    public void connectionOutput(Connection currentCon) {
+    void connectionOutput(Connection currentCon) {
         if (currentCon instanceof Snake)
         {
             np.showStatus("Digesting...");
@@ -68,33 +68,29 @@ public class SLOPController {
         }
     }
 
-    public void handleCheckGameStatusRequest(int curPuppetCellIndex) {
+    void handleCheckGameStatusRequest(int curPuppetCellIndex) {
         np.verifyGameStatus(curPuppetCellIndex);
     }
 
     //--------------------------Getters and Setters----------------------------------------
 
-    public String getPuppetName(){
+    String fetchCurrentPuppetName(){
         return gp.getPuppet().getPuppetName();
     }
 
-    public int fetchCurrentPuppetNumber(){
+    int fetchCurrentPuppetNumber(){
         return gp.getCurrentPuppetIndex();
     }
 
-    public boolean puppetIsAuto(){
+    boolean fetchCurrentPuppetIsAuto(){
         return gp.getPuppet().isAuto();
     }
 
-    public List<String> fetchAllPuppetPositions(){
-        List<String> playerPositions = new ArrayList<>();
-        for(Puppet puppet: gp.getAllPuppets()) {
-            playerPositions.add(puppet.getCellIndex() + "");
-        }
-        return playerPositions;
+    List<String> fetchAllPuppetPositions(){
+        return gp.getAllPuppetPositions();
     }
 
-    public int fetchPlayerNumber(){
+    int fetchPlayerNumber(){
         return gp.getNumberOfPlayers();
     }
 
