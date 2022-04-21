@@ -9,18 +9,18 @@ import java.util.Properties;
 
 public class DiceRoller {
 
-    int numDice;
+    private int numDice;
 
     private int numRolls = 0;
     private int total = 0;
 
     private List<LinkedList<Integer>> dieValues = new ArrayList<>();
 
-    public DiceRoller(int numDice) {
+    DiceRoller(int numDice) {
         this.numDice = numDice;
     }
 
-    public void setupInitialDieValues(Properties properties, int numberOfPlayers) {
+    void setupInitialDieValues(Properties properties, int numberOfPlayers) {
         for (int i = 0; i < numberOfPlayers; i++) {
             if (properties.getProperty("die_values." + i) != null) {
                 LinkedList<Integer> dieValueForPlayer = new LinkedList<>();
@@ -41,7 +41,7 @@ public class DiceRoller {
         System.out.println("dieValues = " + dieValues);
     }
 
-    public int getDieValues(int puppetNum) {
+    int getDieValues(int puppetNum) {
         if (dieValues == null) {
             return ServicesRandom.get().nextInt(6) + 1;
         }
@@ -50,37 +50,26 @@ public class DiceRoller {
                 ServicesRandom.get().nextInt(6) + 1;
     }
 
-    public void registerRoll(int rollValue) {
+    void registerRoll(int rollValue) {
         numRolls++;
         total += rollValue;
     }
 
-    public void resetValues() {
+    void resetValues() {
         numRolls = 0;
         total = 0;
     }
 
-    public void setNumDice(int numDice) {
-        this.numDice = numDice;
-    }
-
-    public int getNumDice() {
+    int getNumDice() {
         return numDice;
     }
 
-    public int getNumRolls() {
+    int getNumRolls() {
         return numRolls;
     }
 
-    public void setNumRolls(int numRolls) {
-        this.numRolls = numRolls;
-    }
-
-    public int getTotal() {
+    int getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
-    }
 }
