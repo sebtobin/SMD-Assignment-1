@@ -53,7 +53,8 @@ public class GamePane extends GameGrid
       int spriteImageIndex = i % MAX_PUPPET_SPRITES;
       String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
 
-      Puppet puppet = new Puppet(this, puppetImage, isAuto, "Player " + (i + 1));
+      String puppetName = "Player " + (i + 1);
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName);
       addActor(puppet, startLocation);
       puppets.add(puppet);
     }
@@ -62,24 +63,6 @@ public class GamePane extends GameGrid
   void createSnakesLadders(Properties properties) {
     connections.addAll(PropertiesLoader.loadSnakes(properties));
     connections.addAll(PropertiesLoader.loadLadders(properties));
-  }
-
-  void switchToNextPuppet() {
-    currentPuppetIndex = (currentPuppetIndex + 1) % numberOfPlayers;
-  }
-
-  void resetAllPuppets() {
-    for (Puppet puppet: puppets) {
-      puppet.resetToStartingPoint();
-    }
-  }
-
-  Connection getConnectionAt(Location loc)
-  {
-    for (Connection con : connections)
-      if (con.locStart.equals(loc))
-        return con;
-    return null;
   }
 
   static Location cellToLocation(int cellIndex)
@@ -110,6 +93,24 @@ public class GamePane extends GameGrid
     double a = (double)(x1 - x0) / (y1 - y0);
     double b = (double)(y1 * x0 - y0 * x1) / (y1 - y0);
     return (int)(a * y + b);
+  }
+
+  void switchToNextPuppet() {
+    currentPuppetIndex = (currentPuppetIndex + 1) % numberOfPlayers;
+  }
+
+  void resetAllPuppets() {
+    for (Puppet puppet: puppets) {
+      puppet.resetToStartingPoint();
+    }
+  }
+
+  Connection getConnectionAt(Location loc)
+  {
+    for (Connection con : connections)
+      if (con.locStart.equals(loc))
+        return con;
+    return null;
   }
 
   boolean checkOtherPuppetAtCell(int currentCell) {

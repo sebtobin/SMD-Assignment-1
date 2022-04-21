@@ -17,32 +17,12 @@ public class Puppet extends Actor
   private boolean minDiceRoll;
   private String puppetName;
 
-  private List<Integer> playerDieValues;
-
   Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName)
   {
     super(puppetImage);
     this.gamePane = gamePane;
     this.isAuto = isAuto;
     this.puppetName = puppetName;
-
-    playerDieValues = new ArrayList<>();
-  }
-
-  public boolean isAuto() {
-    return isAuto;
-  }
-
-  public void setAuto(boolean auto) {
-    isAuto = auto;
-  }
-
-  public String getPuppetName() {
-    return puppetName;
-  }
-
-  public void setMinDiceRoll(boolean minDiceRoll) {
-    this.minDiceRoll = minDiceRoll;
   }
 
   void go(int nbSteps, boolean mindDiceRoll)
@@ -61,10 +41,6 @@ public class Puppet extends Actor
     cellIndex = 0;
     setLocation(gamePane.startLocation);
     setActEnabled(true);
-  }
-
-  int getCellIndex() {
-    return cellIndex;
   }
 
   /* Puppet does its own Location arithmetic instead of using GamePane's static cellToLocation method so that it can
@@ -208,5 +184,17 @@ public class Puppet extends Actor
         }
       }
     }
+  }
+
+  public boolean isAuto() {
+    return isAuto;
+  }
+
+  public String getPuppetName() {
+    return puppetName;
+  }
+
+  int getCellIndex() {
+    return cellIndex;
   }
 }

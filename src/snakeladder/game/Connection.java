@@ -4,10 +4,13 @@ import ch.aplu.jgamegrid.Location;
 
 public abstract class Connection
 {
-  Location locStart;
-  Location locEnd;
   int cellStart;
   int cellEnd;
+
+  Location locStart;
+  Location locEnd;
+
+  String imagePath;
 
   Connection(int cellStart, int cellEnd)
   {
@@ -17,9 +20,7 @@ public abstract class Connection
     locEnd = GamePane.cellToLocation(cellEnd);
   }
 
-  String imagePath;
-
-  public void reverseStartEnd() {
+  void reverseStartEnd() {
     int tmpCell = cellStart;
     cellStart = cellEnd;
     cellEnd = tmpCell;
@@ -29,11 +30,11 @@ public abstract class Connection
     locEnd = tmpLocation;
   }
 
-  public int getCellStart() {
+  int getCellStart() {
     return cellStart;
   }
 
-  public int getCellEnd() {
+  int getCellEnd() {
     return cellEnd;
   }
 
