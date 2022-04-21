@@ -249,12 +249,9 @@ public class NavigationPane extends GameGrid
       isGameOver = true;
       handBtn.setEnabled(true);
 
-      java.util.List  <String> playerPositions = new ArrayList<>();
-      for (Puppet puppet: sc.getAllPuppets()) {
-        playerPositions.add(puppet.getCellIndex() + "");
-      }
+      java.util.List  <String> playerPositions = sc.fetchAllPuppetPositions();
 
-      gamePlayCallback.finishGameWithResults(nbRolls % sc.getNumberOfPlayers(), playerPositions);
+      gamePlayCallback.finishGameWithResults(nbRolls % sc.fetchPlayerNumber(), playerPositions);
       sc.resetGame();
     }
     else
@@ -340,7 +337,7 @@ public class NavigationPane extends GameGrid
   }
 
   void initialiseDiceValues(Properties properties) {
-    dm.setupInitialDieValues(properties, sc.getNumberOfPlayers());
+    dm.setupInitialDieValues(properties, sc.fetchPlayerNumber());
   }
 
   public void checkAuto() {

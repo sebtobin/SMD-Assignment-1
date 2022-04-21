@@ -2,21 +2,10 @@ package snakeladder.game;
 
 import ch.aplu.jgamegrid.GGSound;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/* A facade controller that represents the game system. It is a central class which contains an attribute of all
- * GameGrid objects in the game and is responsible for coordinating the classes of the game in handling user input
- * from NP. This is so that each GameGrid class or other classes that might be in the system can have a single
- * reference (an attribute of this class if absolutely necessary) instead of each of the classes such as GameGrid
- * needing to have an attribute of each other GameGrid.
- *
- * For example, suppose we decide to add a new PlayerSettingPane GameGrid class which requires coordination with
- * GamePane and NavigationPane. Persisting with the original design, GamePane would need to have an attribute of
- * NavigationPane and PlayerSettingPane, NavigationPane would need to have an attribute of GamePane and
- * PlayerSettingPane and vice versa. These dependencies get exponentially confusing to understand. However, with
- * sc, each GameGrid class simply needs an attribute of sc (if necessary), and sc is responsible for handling
- * the coordination of these GameGrid classes when input from the user is given. */
 public class SLOPController {
     private NavigationPane np;
     private GamePane gp;
@@ -28,14 +17,6 @@ public class SLOPController {
         this.gp = gp;
         gp.setSC(this);
 
-    }
-
-    public List<Puppet> getAllPuppets(){
-        return gp.getAllPuppets();
-    }
-
-    public int getNumberOfPlayers(){
-        return gp.getNumberOfPlayers();
     }
 
     //--------------------------------------Methods called by NP----------------------------------------
@@ -62,6 +43,14 @@ public class SLOPController {
         }
     }
 
+    public void resetGame(){
+        gp.resetAllPuppets();
+    }
+
+    public void switchToNextPuppet(){
+        gp.switchToNextPuppet();
+    }
+
     //------------------------------------Methods called by Puppet---------------------------------------
 
     // The method calls to showStatus and playSound are kept here so that NP does not need to know about the Connection
@@ -85,16 +74,8 @@ public class SLOPController {
 
     //--------------------------Getters and Setters----------------------------------------
 
-    public void resetGame(){
-        gp.resetAllPuppets();
-    }
-
     public String getPuppetName(){
         return gp.getPuppet().getPuppetName();
-    }
-
-    public void switchToNextPuppet(){
-        gp.switchToNextPuppet();
     }
 
     public int fetchCurrentPuppetNumber(){
@@ -103,6 +84,18 @@ public class SLOPController {
 
     public boolean puppetIsAuto(){
         return gp.getPuppet().isAuto();
+    }
+
+    public List<String> fetchAllPuppetPositions(){
+        List<String> playerPositions = new ArrayList<>();
+        for(Puppet puppet: gp.getAllPuppets()) {
+            playerPositions.add(puppet.getCellIndex() + "");
+        }
+        return playerPositions;
+    }
+
+    public int fetchPlayerNumber(){
+        return gp.getNumberOfPlayers();
     }
 
 }
