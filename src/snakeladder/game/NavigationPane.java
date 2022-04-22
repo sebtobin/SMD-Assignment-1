@@ -5,7 +5,6 @@ import java.awt.*;
 import ch.aplu.util.*;
 import snakeladder.game.custom.CustomGGButton;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 @SuppressWarnings("serial")
@@ -250,7 +249,7 @@ public class NavigationPane extends GameGrid
       handBtn.setEnabled(true);
 
       java.util.List  <String> playerPositions = sc.fetchAllPuppetPositions();
-
+      sc.printPuppetStats();
       gamePlayCallback.finishGameWithResults(nbRolls % sc.fetchPlayerNumber(), playerPositions);
       sc.resetGame();
     }
@@ -296,7 +295,8 @@ public class NavigationPane extends GameGrid
   }
 
   public void checkNextRoll(){
-    if (checkLastRoll()){
+    if (isLastRoll()){
+      sc.addRollToPuppet(dr.getTotal());
       startMoving(dr.getTotal());
       dr.resetValues();
     }else{
@@ -329,7 +329,7 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  public boolean checkLastRoll(){
+  public boolean isLastRoll(){
     return dr.getNumRolls() == dr.getNumDice();
   }
   public int rollDice() {

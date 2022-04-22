@@ -35,7 +35,7 @@ public class FrameTutorial extends JFrame
 
     pack();  // Must be called before actors are added!
     np.createGui();
-    gp.createGui();
+    gp.createGui(Integer.parseInt(properties.getProperty("dice.count")));
     np.initialiseDiceValues(properties);
 
     np.checkAuto();

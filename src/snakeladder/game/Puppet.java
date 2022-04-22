@@ -2,6 +2,7 @@ package snakeladder.game;
 
 import ch.aplu.jgamegrid.*;
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -16,13 +17,14 @@ public class Puppet extends Actor
   private boolean isAuto;
   private boolean minDiceRoll;
   private String puppetName;
-
-  Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName)
+  private RollTracker rollTracker;
+  Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName, int numDice)
   {
     super(puppetImage);
     this.gamePane = gamePane;
     this.isAuto = isAuto;
     this.puppetName = puppetName;
+    this.rollTracker = new RollTracker(numDice);
   }
 
   void go(int nbSteps, boolean mindDiceRoll)
@@ -156,7 +158,7 @@ public class Puppet extends Actor
 
         // Check if on connection start, proceed if not both connection is downward and minimum dice roll was rolled
         if ((currentCon = gamePane.getConnectionAt(getLocation())) != null &&
-              !(currentCon.locEnd.y > currentCon.locStart.y && minDiceRoll == true))
+              !(currentCon.locEnd.y > currentCon.locStart.y && minDiceRoll))
         {
           gamePane.setSimulationPeriod(50);
 
@@ -166,9 +168,11 @@ public class Puppet extends Actor
           // Larger y-coordinate means downwards. If the end location of the connection is downwards.
           if (currentCon.locEnd.y > currentCon.locStart.y) {
             dy = gamePane.animationStep;
+            rollTracker.addConnectionTraversal("down");
           // If the end location of the connection is upwards.
           } else {
             dy = -gamePane.animationStep;
+            rollTracker.addConnectionTraversal("up");
           }
 
           // Instead of Puppet directly telling NavigationPane to output, Puppet goes through GameSessionManager which
@@ -184,6 +188,13 @@ public class Puppet extends Actor
         }
       }
     }
+  }
+  public void addRoll(int totalRoll){
+    rollTracker.addRoll(totalRoll);
+  }
+  public void printStats(){
+    rollTracker.printRolls(puppetName);
+    rollTracker.printConnectionTraversals(puppetName);
   }
 
   public boolean isAuto() {

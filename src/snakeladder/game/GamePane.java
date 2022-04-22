@@ -46,7 +46,7 @@ public class GamePane extends GameGrid
     System.out.println("playerManualMode = " + playerManualMode);
   }
 
-  void createGui()
+  void createGui(int numDice)
   {
     for (int i = 0; i < numberOfPlayers; i++) {
       boolean isAuto = playerManualMode.get(i);
@@ -54,7 +54,7 @@ public class GamePane extends GameGrid
       String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
 
       String puppetName = "Player " + (i + 1);
-      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName);
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName, numDice);
       addActor(puppet, startLocation);
       puppets.add(puppet);
     }
@@ -209,6 +209,14 @@ public class GamePane extends GameGrid
       playerPositions.add(puppet.getCellIndex() + "");
     }
     return playerPositions;
+  }
+  public void printPuppetStats(){
+    for (Puppet puppet : puppets){
+      puppet.printStats();
+    }
+  }
+  public void addRollToPuppet(int totalRoll){
+    getPuppet().addRoll(totalRoll);
   }
 }
 

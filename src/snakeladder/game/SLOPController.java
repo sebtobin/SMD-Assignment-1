@@ -89,7 +89,12 @@ public class SLOPController {
     List<String> fetchAllPuppetPositions(){
         return gp.getAllPuppetPositions();
     }
-
+    public void addRollToPuppet(int totalRoll){
+        gp.addRollToPuppet(totalRoll);
+    }
+    public void printPuppetStats(){
+        gp.printPuppetStats();
+    }
     int fetchPlayerNumber(){
         return gp.getNumberOfPlayers();
     }
