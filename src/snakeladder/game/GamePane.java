@@ -10,11 +10,13 @@ import java.util.Properties;
 @SuppressWarnings("serial")
 public class GamePane extends GameGrid
 {
-  private NavigationPane np;
+  private SLOPController sc;
+
   private int numberOfPlayers = 1;
   private int currentPuppetIndex = 0;
   private List<Puppet> puppets =  new ArrayList<>();
   private List<Boolean> playerManualMode;
+
   private ArrayList<Connection> connections = new ArrayList<Connection>();
   final Location startLocation = new Location(-1, 9);  // outside grid
   final int animationStep = 10;
@@ -44,16 +46,6 @@ public class GamePane extends GameGrid
     System.out.println("playerManualMode = " + playerManualMode);
   }
 
-  void createSnakesLadders(Properties properties) {
-    connections.addAll(PropertiesLoader.loadSnakes(properties));
-    connections.addAll(PropertiesLoader.loadLadders(properties));
-  }
-
-  void setNavigationPane(NavigationPane np)
-  {
-    this.np = np;
-  }
-
   void createGui()
   {
     for (int i = 0; i < numberOfPlayers; i++) {
@@ -61,43 +53,16 @@ public class GamePane extends GameGrid
       int spriteImageIndex = i % MAX_PUPPET_SPRITES;
       String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
 
-      Puppet puppet = new Puppet(this, np, puppetImage);
-      puppet.setAuto(isAuto);
-      puppet.setPuppetName("Player " + (i + 1));
+      String puppetName = "Player " + (i + 1);
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName);
       addActor(puppet, startLocation);
       puppets.add(puppet);
     }
   }
 
-  Puppet getPuppet()
-  {
-    return puppets.get(currentPuppetIndex);
-  }
-
-  void switchToNextPuppet() {
-    currentPuppetIndex = (currentPuppetIndex + 1) % numberOfPlayers;
-  }
-
-  List<Puppet> getAllPuppets() {
-    return puppets;
-  }
-
-  void resetAllPuppets() {
-    for (Puppet puppet: puppets) {
-      puppet.resetToStartingPoint();
-    }
-  }
-
-  public int getNumberOfPlayers() {
-    return numberOfPlayers;
-  }
-
-  Connection getConnectionAt(Location loc)
-  {
-    for (Connection con : connections)
-      if (con.locStart.equals(loc))
-        return con;
-    return null;
+  void createSnakesLadders(Properties properties) {
+    connections.addAll(PropertiesLoader.loadSnakes(properties));
+    connections.addAll(PropertiesLoader.loadLadders(properties));
   }
 
   static Location cellToLocation(int cellIndex)
@@ -117,7 +82,7 @@ public class GamePane extends GameGrid
 
     return new Location(x, y);
   }
-  
+
   int x(int y, Connection con)
   {
     int x0 = toPoint(con.locStart).x;
@@ -130,4 +95,121 @@ public class GamePane extends GameGrid
     return (int)(a * y + b);
   }
 
+  void switchToNextPuppet() {
+    currentPuppetIndex = (currentPuppetIndex + 1) % numberOfPlayers;
+  }
+
+  void resetAllPuppets() {
+    for (Puppet puppet: puppets) {
+      puppet.resetToStartingPoint();
+    }
+  }
+
+  Connection getConnectionAt(Location loc)
+  {
+    for (Connection con : connections)
+      if (con.locStart.equals(loc))
+        return con;
+    return null;
+  }
+
+  boolean checkOtherPuppetAtCell(int currentCell) {
+    /* For each player in the game that is not the current player trying to move, if they are on the cell that
+     * the current player is trying to move to, then the method returns true. The method returns false otherwise. */
+    for(int i = 0; i < numberOfPlayers; i++) {
+      if(i != currentPuppetIndex) {
+        if(puppets.get(i).getCellIndex() == currentCell) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void shiftOtherPuppetsBackwards() {
+    for (int i = 0; i < numberOfPlayers; i++) {
+      if (i != currentPuppetIndex) {
+        puppets.get(i).moveToPreviousCell();
+      }
+    }
+  }
+
+  void toggleConnection() {
+    for(int i = 0; i < connections.size(); i++){
+      connections.get(i).reverseStartEnd();
+    }
+  }
+
+  boolean moreUpwardsConnections(int numDice) {
+    int lowestPossibleRoll = numDice * 1, highestPossibleRoll = numDice * 6;
+    int lowestPossibleCell, highestPossibleCell;
+
+    int numUpwardsConnections = 0, numDownwardsConnections = 0;
+    Puppet currentPuppet;
+    Connection currentConnection;
+
+    // For all players that are not the current player (opponents), determine the lowest and highest possible cells
+    // they are able to reach within their turn.
+    for(int i = 0; i < numberOfPlayers; i++) {
+      if(i != currentPuppetIndex) {
+        currentPuppet = puppets.get(i);
+        lowestPossibleCell = currentPuppet.getCellIndex() + lowestPossibleRoll;
+        highestPossibleCell = currentPuppet.getCellIndex() + highestPossibleRoll;
+        // Check all the connections that start at a cell available to the opponent in this current turn.
+        for(int j = lowestPossibleCell; j < highestPossibleCell; j++) {
+          // If a connection exists on a cell. Check if they're an upwards or downwards connection and increment the
+          // respective counters.
+          if((currentConnection = getConnectionAt(cellToLocation(j))) != null) {
+            if (currentConnection.getCellEnd() > currentConnection.getCellStart()) {
+              numUpwardsConnections++;
+            } else {
+              numDownwardsConnections++;
+            }
+          }
+        }
+      }
+    }
+    // If the amount of upwards connections is more than or equal to downwards connections for the opponent,
+    // return true. Otherwise, return false.
+    if(numUpwardsConnections >= numDownwardsConnections) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  SLOPController getSC() {
+    return sc;
+  }
+
+  void setSC(SLOPController sc) {
+    this.sc = sc;
+  }
+
+  int getCurrentPuppetIndex() {
+    return currentPuppetIndex;
+  }
+
+  Puppet getPuppet()
+  {
+    return puppets.get(currentPuppetIndex);
+  }
+
+  List<Puppet> getAllPuppets() {
+    return puppets;
+  }
+
+  public int getNumberOfPlayers() {
+    return numberOfPlayers;
+  }
+
+  List<String> getAllPuppetPositions(){
+    List<String> playerPositions = new ArrayList<>();
+    for(Puppet puppet: getAllPuppets()) {
+      playerPositions.add(puppet.getCellIndex() + "");
+    }
+    return playerPositions;
+  }
 }
+
+

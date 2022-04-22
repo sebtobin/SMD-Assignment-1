@@ -24,20 +24,22 @@ public class FrameTutorial extends JFrame
     getContentPane().add(gp, BorderLayout.WEST);
     NavigationPane np = new NavigationPane(properties);
     getContentPane().add(np, BorderLayout.EAST);
+    SLOPController sc = new SLOPController(np, gp);
     np.setGamePlayCallback(new GamePlayCallback() {
       @Override
       public void finishGameWithResults(int winningPlayerIndex, List<String> playerCurrentPositions) {
-       System.out.println("DO NOT CHANGE THIS LINE---WINNING INFORMATION: " + winningPlayerIndex + "-" + String.join(",", playerCurrentPositions));
+        System.out.println("DO NOT CHANGE THIS LINE---WINNING INFORMATION: " + winningPlayerIndex + "-" + String.join(",", playerCurrentPositions));
       }
     });
 
-    pack();  // Must be called before actors are added!
 
-    np.setGamePane(gp);
+    pack();  // Must be called before actors are added!
     np.createGui();
-    gp.setNavigationPane(np);
     gp.createGui();
+    np.initialiseDiceValues(properties);
+
     np.checkAuto();
+
   }
 
   public static void main(String[] args)

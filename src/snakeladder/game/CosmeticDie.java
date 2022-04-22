@@ -2,12 +2,12 @@ package snakeladder.game;
 
 import ch.aplu.jgamegrid.Actor;
 
-public class Die extends Actor
+public class CosmeticDie extends Actor
 {
   private NavigationPane np;
   private int nb;
 
-  Die(int nb, NavigationPane np)
+  CosmeticDie(int nb, NavigationPane np)
   {
     super("sprites/pips" + nb + ".gif", 7);
     this.nb = nb;
@@ -20,7 +20,7 @@ public class Die extends Actor
     if (getIdVisible() == 6)
     {
       setActEnabled(false);
-      np.startMoving(nb);
+      np.checkNextRoll();
     }
   }
 
