@@ -17,12 +17,18 @@ public class NavigationPane extends GameGrid
   {
     public void run()
     {
+      CosmeticDie die = null;
       while (true)
       {
+        if (die != null){
+          System.out.println(die.isActEnabled());
+        }
+
         Monitor.putSleep();
         handBtn.show(1);
-        completeRoll(rollDice());
+        die = completeRoll(rollDice());
         delay(1000);
+
         handBtn.show(0);
       }
     }
@@ -276,13 +282,14 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  private void playDieAnimation(int rollNumber) {
+  private CosmeticDie playDieAnimation(int rollNumber) {
     showStatus("Rolling...");
     showPips("");
 
     removeActors(CosmeticDie.class);
     CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this);
     addActor(cosmeticDie, dieBoardLocation);
+    return cosmeticDie;
   }
 
   public void nextRoll(){
@@ -304,11 +311,13 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  public void completeRoll(int rollValue){
-    playDieAnimation(rollValue);
+  public CosmeticDie completeRoll(int rollValue){
+    CosmeticDie die =  playDieAnimation(rollValue);
     dr.registerRoll(rollValue);
     nbRolls++;
+
     showScore("# Rolls: " + (nbRolls));
+    return die;
   }
 
   /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
