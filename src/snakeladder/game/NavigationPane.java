@@ -20,16 +20,20 @@ public class NavigationPane extends GameGrid
       CosmeticDie die = null;
       while (true)
       {
-        if (die != null){
-          System.out.println(die.isActEnabled());
+        Monitor.putSleep();
+        boolean last = false;
+        int numDice = dr.getNumDice();
+        for (int i=0;i<numDice;i++){
+          handBtn.show(1);
+          // to prevent any die other than the lat to start moving
+          if (i == numDice - 1){
+            last = true;
+          }
+          completeRoll(rollDice(), last);
+          delay(1000);
+          handBtn.show(0);
         }
 
-        Monitor.putSleep();
-        handBtn.show(1);
-        die = completeRoll(rollDice());
-        delay(1000);
-
-        handBtn.show(0);
       }
     }
 
@@ -132,7 +136,7 @@ public class NavigationPane extends GameGrid
         int tag = customGGButton.getTag();
         System.out.println("manual die button clicked - tag: " + tag);
         prepareBeforeRoll();
-        playDieAnimation(tag);
+        playDieAnimation(tag, true);
       }
     }
   }
@@ -233,8 +237,9 @@ public class NavigationPane extends GameGrid
   public void buttonClicked(GGButton btn)
   {
     System.out.println("hand button clicked");
+
     prepareBeforeRoll();
-    completeRoll(rollDice());
+    completeRoll(rollDice(), true);
   }
 
   public void buttonPressed(GGButton btn)
@@ -254,7 +259,7 @@ public class NavigationPane extends GameGrid
       showResult("Game over");
       isGameOver = true;
       handBtn.setEnabled(true);
-
+      sc.printPuppetStats();
       java.util.List  <String> playerPositions = sc.fetchAllPuppetPositions();
 
       gamePlayCallback.finishGameWithResults(nbRolls % sc.fetchPlayerNumber(), playerPositions);
@@ -282,18 +287,19 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  private CosmeticDie playDieAnimation(int rollNumber) {
+  // Creates a new die with the roll valye and plays the animation on NP
+  private void playDieAnimation(int rollNumber, boolean last) {
     showStatus("Rolling...");
     showPips("");
 
     removeActors(CosmeticDie.class);
-    CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this);
+    CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this, last);
     addActor(cosmeticDie, dieBoardLocation);
-    return cosmeticDie;
   }
-
+  // invoke the next roll depending if the game is auto or not
   public void nextRoll(){
     if (gameSessionIsAuto) {
+      System.out.println("Wake up");
       Monitor.wakeUp();
     } else if (sc.fetchCurrentPuppetIsAuto()) {
       Monitor.wakeUp();
@@ -302,34 +308,25 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  public void checkNextRoll(){
-    if (checkLastRoll()){
-      startMoving(dr.getTotal());
-      dr.resetValues();
-    }else{
-      nextRoll();
-    }
-  }
-
-  public CosmeticDie completeRoll(int rollValue){
-    CosmeticDie die =  playDieAnimation(rollValue);
+  public void completeRoll(int rollValue, boolean last){
+    playDieAnimation(rollValue, last);
     dr.registerRoll(rollValue);
     nbRolls++;
 
     showScore("# Rolls: " + (nbRolls));
-    return die;
   }
 
   /* In the act() method of Die class, if getIDVisible == 6, then we disable the Die to act in further
    *  ticks until the player has finished their movement and reached the goal.  */
-  public void startMoving(int nb)
+  public void startMoving()
   {
     showStatus("Moving...");
-    showPips("Pips: " + nb);
+    showPips("Pips: " + dr.getTotal());
 
-    boolean minDiceRoll = (nb == dr.getNumDice());
-    sc.handleMovement(nb, minDiceRoll);
-
+    boolean minDiceRoll = (dr.getTotal() == dr.getNumDice());
+    sc.handleMovement(dr.getTotal(), minDiceRoll);
+    sc.addRollToCurrPuppet(dr.getTotal());
+    dr.resetValues();
     // Determine toggle strategy after moving to minimise advantage of opponents
     if (sc.toggleStrategy(dr.getNumDice())) {
       isToggle = !isToggle;
@@ -355,6 +352,9 @@ public class NavigationPane extends GameGrid
 
   public void setSC(SLOPController sc) {
     this.sc = sc;
+  }
+  int getNumDice(){
+    return dr.getNumDice();
   }
 
 }

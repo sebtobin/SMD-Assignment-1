@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class DiceRoller {
 
-    private int numDice;
+    private final int numDice;
 
     private int numRolls = 0;
     private int total = 0;
