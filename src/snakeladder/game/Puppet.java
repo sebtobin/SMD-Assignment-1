@@ -154,9 +154,9 @@ public class Puppet extends Actor
           gamePane.shiftOtherPuppetsBackwards();
         }
 
-        // Check if on connection start, proceed if not both connection is downward and minimum dice roll was rolled
+        // Check if on connection start, proceed if either min dice roll wasn't rolled or connection moves upwards
         if ((currentCon = gamePane.getConnectionAt(getLocation())) != null &&
-              !(currentCon.locEnd.y > currentCon.locStart.y && minDiceRoll == true))
+              (currentCon.locEnd.y < currentCon.locStart.y || minDiceRoll == false))
         {
           gamePane.setSimulationPeriod(50);
 
