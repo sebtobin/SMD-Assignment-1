@@ -1,4 +1,4 @@
-Spackage snakeladder.game;
+package snakeladder.game;
 
 import ch.aplu.jgamegrid.*;
 import java.awt.Point;
