@@ -68,9 +68,10 @@ public class SLOPController {
         }
     }
 
-    void handleCheckGameStatusRequest(int curPuppetCellIndex) {
-        np.verifyGameStatus(curPuppetCellIndex);
+    void handleEndTurnRequest() {
+        np.endTurn(gp.getPuppet().getCellIndex());
     }
+
 
     //--------------------------Getters and Setters----------------------------------------
 
@@ -93,12 +94,15 @@ public class SLOPController {
     int fetchPlayerNumber(){
         return gp.getNumberOfPlayers();
     }
-    int getNumDice(){
-        return np.getNumDice();
+
+    int fetchNumDice(){
+        return np.fetchNumDice();
     }
+
     void addRollToCurrPuppet(int totalRoll){
         gp.addRollToCurrPlayer(totalRoll);
     }
+
     void printPuppetStats(){
         gp.printPuppetStats();
     }
