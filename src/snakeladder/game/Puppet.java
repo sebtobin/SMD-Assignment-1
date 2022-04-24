@@ -183,6 +183,7 @@ public class Puppet extends Actor
         {
           // in case min dice roll check occured, reset currentcon to null so no animation is played
           currentCon = null;
+          minDiceRoll = false;
           setActEnabled(false);
           sc.handleCheckGameStatusRequest(cellIndex);
         }
