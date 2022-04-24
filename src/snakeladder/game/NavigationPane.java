@@ -287,7 +287,7 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  // Creates a new die with the roll valye and plays the animation on NP
+  // Creates a new die with the roll value and plays the animation on NP
   private void playDieAnimation(int rollNumber) {
     showStatus("Rolling...");
     showPips("");
