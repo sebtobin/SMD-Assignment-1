@@ -17,12 +17,9 @@ public class NavigationPane extends GameGrid
   {
     public void run()
     {
-      CosmeticDie die = null;
       while (true)
       {
         Monitor.putSleep();
-        boolean last = false;
-        int numDice = dr.getNumDice();
         while (dr.getNumRolls() < dr.getNumDice()){
           handBtn.show(1);
           completeRoll(rollDice());
@@ -250,7 +247,7 @@ public class NavigationPane extends GameGrid
   {
   }
 
-  public void verifyGameStatus(int currentIndex)
+  public void endTurn(int currentIndex)
   {
     if (currentIndex == 100)  // Game over
     {
@@ -271,6 +268,7 @@ public class NavigationPane extends GameGrid
       showStatus("Done. Click the hand!");
       String result = sc.fetchCurrentPuppetName() + " - pos: " + currentIndex;
       showResult(result);
+
       sc.switchToNextPuppet();
       /*System.out.println("current puppet - auto: " + sc.fetchCurrentPuppetName() +
               "  " + sc.fetchCurrentPuppetIsAuto());*/
@@ -328,6 +326,7 @@ public class NavigationPane extends GameGrid
     sc.handleMovement(dr.getTotal(), minDiceRoll);
     sc.addRollToCurrPuppet(dr.getTotal());
     dr.resetValues();
+
     // Determine toggle strategy after moving to minimise advantage of opponents
     if (sc.toggleStrategy(dr.getNumDice())) {
       isToggle = !isToggle;
@@ -339,6 +338,7 @@ public class NavigationPane extends GameGrid
   public boolean checkLastRoll(){
     return dr.getNumRolls() == dr.getNumDice();
   }
+
   public int rollDice() {
     return dr.getDieValues(sc.fetchCurrentPuppetNumber());
   }
@@ -354,7 +354,8 @@ public class NavigationPane extends GameGrid
   public void setSC(SLOPController sc) {
     this.sc = sc;
   }
-  int getNumDice(){
+
+  int fetchNumDice(){
     return dr.getNumDice();
   }
 

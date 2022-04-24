@@ -54,7 +54,7 @@ public class GamePane extends GameGrid
       String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
 
       String puppetName = "Player " + (i + 1);
-      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName, sc.getNumDice());
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName, sc.fetchNumDice());
       addActor(puppet, startLocation);
       puppets.add(puppet);
     }
@@ -113,26 +113,23 @@ public class GamePane extends GameGrid
     return null;
   }
 
-  boolean checkOtherPuppetAtCell(int currentCell) {
-    /* For each player in the game that is not the current player trying to move, if they are on the cell that
-     * the current player is trying to move to, then the method returns true. The method returns false otherwise. */
+  boolean checkAndShiftOtherPuppetAtCell(int currentCell) {
+    // A boolean variable which will be set to true if the opponent gets shifted back into a connection
+    boolean puppetShiftedIntoConnection = false;
+
+    // Check if the opponent is on the same cell. If they are then have them shift backwards and also delegate the
+    // responsibility to end the turn (calling handleEndTurnRequest) to that opponent.
     for(int i = 0; i < numberOfPlayers; i++) {
       if(i != currentPuppetIndex) {
         if(puppets.get(i).getCellIndex() == currentCell) {
-          return true;
+          puppetShiftedIntoConnection = puppets.get(i).moveToPreviousCell();
         }
       }
     }
-    return false;
+
+    return puppetShiftedIntoConnection;
   }
 
-  void shiftOtherPuppetsBackwards() {
-    for (int i = 0; i < numberOfPlayers; i++) {
-      if (i != currentPuppetIndex) {
-        puppets.get(i).moveToPreviousCell();
-      }
-    }
-  }
 
   void toggleConnection() {
     for(int i = 0; i < connections.size(); i++){
