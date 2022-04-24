@@ -16,13 +16,15 @@ public class Puppet extends Actor
   private boolean isAuto;
   private boolean minDiceRoll;
   private String puppetName;
+  private StatTracker statTracker;
 
-  Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName)
+  Puppet(GamePane gamePane, String puppetImage, boolean isAuto, String puppetName, int numDice)
   {
     super(puppetImage);
     this.gamePane = gamePane;
     this.isAuto = isAuto;
     this.puppetName = puppetName;
+    statTracker = new StatTracker(numDice);
   }
 
   void go(int nbSteps, boolean mindDiceRoll)
@@ -166,9 +168,11 @@ public class Puppet extends Actor
           // Larger y-coordinate means downwards. If the end location of the connection is downwards.
           if (currentCon.locEnd.y > currentCon.locStart.y) {
             dy = gamePane.animationStep;
+            statTracker.addTraversal("down");
           // If the end location of the connection is upwards.
           } else {
             dy = -gamePane.animationStep;
+            statTracker.addTraversal("up");
           }
 
           // Instead of Puppet directly telling NavigationPane to output, Puppet goes through GameSessionManager which
@@ -196,5 +200,11 @@ public class Puppet extends Actor
 
   int getCellIndex() {
     return cellIndex;
+  }
+  void addRoll(int totalRoll){
+    statTracker.addRoll(totalRoll);
+  }
+  void printStats(){
+    statTracker.printStats(puppetName);
   }
 }

@@ -6,12 +6,13 @@ public class CosmeticDie extends Actor
 {
   private NavigationPane np;
   private int nb;
-
-  CosmeticDie(int nb, NavigationPane np)
+  boolean last;
+  CosmeticDie(int nb, NavigationPane np, boolean last)
   {
     super("sprites/pips" + nb + ".gif", 7);
     this.nb = nb;
     this.np = np;
+    this.last = last;
   }
 
   public void act()
@@ -20,8 +21,13 @@ public class CosmeticDie extends Actor
     if (getIdVisible() == 6)
     {
       setActEnabled(false);
-      np.checkNextRoll();
+      if (last){ // only start moving the die if it's the last one
+        np.startMoving();
+      }
+
+
     }
+
   }
 
 }

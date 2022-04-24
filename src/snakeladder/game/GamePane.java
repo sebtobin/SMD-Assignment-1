@@ -54,7 +54,7 @@ public class GamePane extends GameGrid
       String puppetImage = "sprites/cat_" + spriteImageIndex + ".gif";
 
       String puppetName = "Player " + (i + 1);
-      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName);
+      Puppet puppet = new Puppet(this, puppetImage, isAuto, puppetName, sc.getNumDice());
       addActor(puppet, startLocation);
       puppets.add(puppet);
     }
@@ -209,6 +209,14 @@ public class GamePane extends GameGrid
       playerPositions.add(puppet.getCellIndex() + "");
     }
     return playerPositions;
+  }
+  void addRollToCurrPlayer(int totalRoll){
+    getPuppet().addRoll(totalRoll);
+  }
+  void printPuppetStats(){
+    for(Puppet puppet : puppets){
+      puppet.printStats();
+    }
   }
 }
 

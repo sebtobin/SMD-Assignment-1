@@ -93,6 +93,15 @@ public class SLOPController {
     int fetchPlayerNumber(){
         return gp.getNumberOfPlayers();
     }
+    int getNumDice(){
+        return np.getNumDice();
+    }
+    void addRollToCurrPuppet(int totalRoll){
+        gp.addRollToCurrPlayer(totalRoll);
+    }
+    void printPuppetStats(){
+        gp.printPuppetStats();
+    }
 
 }
 
