@@ -327,12 +327,12 @@ public class NavigationPane extends GameGrid
     sc.addRollToCurrPuppet(dr.getTotal());
     dr.resetValues();
 
-    /*// Determine toggle strategy after moving to minimise advantage of opponents
+    // Determine toggle strategy after moving to minimise advantage of opponents
     if (sc.toggleStrategy(dr.getNumDice())) {
       isToggle = !isToggle;
       toggleCheck.setChecked(isToggle);
       sc.handleToggle();
-    }*/
+    }
   }
 
   public boolean checkLastRoll(){
