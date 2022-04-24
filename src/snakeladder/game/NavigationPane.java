@@ -23,13 +23,9 @@ public class NavigationPane extends GameGrid
         Monitor.putSleep();
         boolean last = false;
         int numDice = dr.getNumDice();
-        for (int i=0;i<numDice;i++){
+        while (dr.getNumRolls() < dr.getNumDice()){
           handBtn.show(1);
-          // to prevent any die other than the lat to start moving
-          if (i == numDice - 1){
-            last = true;
-          }
-          completeRoll(rollDice(), last);
+          completeRoll(rollDice());
           delay(1000);
           handBtn.show(0);
         }
@@ -136,7 +132,7 @@ public class NavigationPane extends GameGrid
         int tag = customGGButton.getTag();
         System.out.println("manual die button clicked - tag: " + tag);
         prepareBeforeRoll();
-        playDieAnimation(tag, true);
+        completeRoll(tag);
       }
     }
   }
@@ -239,7 +235,11 @@ public class NavigationPane extends GameGrid
     System.out.println("hand button clicked");
 
     prepareBeforeRoll();
-    completeRoll(rollDice(), true);
+    completeRoll(rollDice());
+    // enable the hand button if not all rolls have been done
+    if (dr.getNumDice() > dr.getNumRolls()){
+      handBtn.setEnabled(true);
+    }
   }
 
   public void buttonPressed(GGButton btn)
@@ -288,12 +288,13 @@ public class NavigationPane extends GameGrid
   }
 
   // Creates a new die with the roll valye and plays the animation on NP
-  private void playDieAnimation(int rollNumber, boolean last) {
+  private void playDieAnimation(int rollNumber) {
     showStatus("Rolling...");
     showPips("");
 
     removeActors(CosmeticDie.class);
-    CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this, last);
+    // only instruct the die to start moving if it's the last one
+    CosmeticDie cosmeticDie = new CosmeticDie(rollNumber, this, dr.getNumRolls() == dr.getNumDice() - 1);
     addActor(cosmeticDie, dieBoardLocation);
   }
   // invoke the next roll depending if the game is auto or not
@@ -308,8 +309,8 @@ public class NavigationPane extends GameGrid
     }
   }
 
-  public void completeRoll(int rollValue, boolean last){
-    playDieAnimation(rollValue, last);
+  public void completeRoll(int rollValue){
+    playDieAnimation(rollValue);
     dr.registerRoll(rollValue);
     nbRolls++;
 
