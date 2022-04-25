@@ -137,7 +137,8 @@ public class GamePane extends GameGrid
     }
   }
 
-  boolean moreUpwardsConnections(int numDice) {
+  boolean moreUpwardsConnections() {
+    int numDice = sc.fetchNumDice();
     int lowestPossibleRoll = numDice * 1, highestPossibleRoll = numDice * 6;
     int lowestPossibleCell, highestPossibleCell;
 

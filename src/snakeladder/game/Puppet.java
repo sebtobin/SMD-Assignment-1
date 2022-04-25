@@ -73,9 +73,15 @@ public class Puppet extends Actor
 
   private void endTurn() {
     if (toEndTurn) {
-      gamePane.getSC().toggleStrategy();
+      toggleStrategy();
       gamePane.getSC().handleEndTurnRequest();
       toEndTurn = false;
+    }
+  }
+
+  void toggleStrategy() {
+    if(gamePane.moreUpwardsConnections()){
+      gamePane.getSC().handleToggle();
     }
   }
 

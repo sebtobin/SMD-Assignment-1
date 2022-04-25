@@ -35,8 +35,7 @@ public class SLOPController {
     /* NERDI can make changes to the strategy here easily, even if it involves the use of some other classes
      * like other game entities or panes. */
     void toggleStrategy() {
-        int numDice = np.fetchNumDice();
-        if(gp.moreUpwardsConnections(numDice)){
+        if(gp.moreUpwardsConnections()){
             handleToggle();
         }
     }
