@@ -73,6 +73,7 @@ public class Puppet extends Actor
 
   private void endTurn() {
     if (toEndTurn) {
+      gamePane.getSC().toggleStrategy();
       gamePane.getSC().handleEndTurnRequest();
       toEndTurn = false;
     }
@@ -83,7 +84,7 @@ public class Puppet extends Actor
     setLocation(GamePane.cellToLocation(cellIndex));
 
     // If a puppet was shifted backwards onto a connection by an opponent, they need to be able to act temporarily
-    // in order to traverse the connection. Hence, true is returned.
+    // in order to traverse the connection. Hence, true is returned and responsibility of ending turn is assigned.
     if((currentCon = gamePane.getConnectionAt(getLocation())) != null) {
       prepareToTraverseConnection();
       setActEnabled(true);

@@ -152,8 +152,9 @@ public class GamePane extends GameGrid
         currentPuppet = puppets.get(i);
         lowestPossibleCell = currentPuppet.getCellIndex() + lowestPossibleRoll;
         highestPossibleCell = currentPuppet.getCellIndex() + highestPossibleRoll;
+
         // Check all the connections that start at a cell available to the opponent in this current turn.
-        for(int j = lowestPossibleCell; j < highestPossibleCell; j++) {
+        for(int j = lowestPossibleCell; j <= highestPossibleCell; j++) {
           // If a connection exists on a cell. Check if they're an upwards or downwards connection and increment the
           // respective counters.
           if((currentConnection = getConnectionAt(cellToLocation(j))) != null) {
@@ -166,6 +167,7 @@ public class GamePane extends GameGrid
         }
       }
     }
+
     // If the amount of upwards connections is more than or equal to downwards connections for the opponent,
     // return true. Otherwise, return false.
     if(numUpwardsConnections >= numDownwardsConnections) {

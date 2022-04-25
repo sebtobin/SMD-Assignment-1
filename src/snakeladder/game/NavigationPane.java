@@ -298,7 +298,6 @@ public class NavigationPane extends GameGrid
   // invoke the next roll depending if the game is auto or not
   public void nextRoll(){
     if (gameSessionIsAuto) {
-      System.out.println("Wake up");
       Monitor.wakeUp();
     } else if (sc.fetchCurrentPuppetIsAuto()) {
       Monitor.wakeUp();
@@ -327,12 +326,16 @@ public class NavigationPane extends GameGrid
     sc.addRollToCurrPuppet(dr.getTotal());
     dr.resetValues();
 
-    // Determine toggle strategy after moving to minimise advantage of opponents
+    /*// Determine toggle strategy after moving to minimise advantage of opponents
     if (sc.toggleStrategy(dr.getNumDice())) {
-      isToggle = !isToggle;
-      toggleCheck.setChecked(isToggle);
+
       sc.handleToggle();
-    }
+    }*/
+  }
+
+  void switchToggleButton() {
+    isToggle = !isToggle;
+    toggleCheck.setChecked(isToggle);
   }
 
   public boolean checkLastRoll(){

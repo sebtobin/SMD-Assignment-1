@@ -27,19 +27,17 @@ public class SLOPController {
         gp.getPuppet().go(nb, minDiceRoll);
     }
 
-    /* NavigationPane doesn't care how the dice is rolled, it just tells sc to handle it and give NP back information
-     * for display if necessary. */
     void handleToggle() {
         gp.toggleConnection();
+        np.switchToggleButton();
     }
 
     /* NERDI can make changes to the strategy here easily, even if it involves the use of some other classes
      * like other game entities or panes. */
-    boolean toggleStrategy(int numDice) {
+    void toggleStrategy() {
+        int numDice = np.fetchNumDice();
         if(gp.moreUpwardsConnections(numDice)){
-            return true;
-        } else {
-            return false;
+            handleToggle();
         }
     }
 
