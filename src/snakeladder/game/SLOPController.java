@@ -32,13 +32,6 @@ public class SLOPController {
         np.switchToggleButton();
     }
 
-    /* NERDI can make changes to the strategy here easily, even if it involves the use of some other classes
-     * like other game entities or panes. */
-    void toggleStrategy() {
-        if(gp.moreUpwardsConnections()){
-            handleToggle();
-        }
-    }
 
     void resetGame(){
         gp.resetAllPuppets();

@@ -325,12 +325,6 @@ public class NavigationPane extends GameGrid
     sc.handleMovement(dr.getTotal(), minDiceRoll);
     sc.addRollToCurrPuppet(dr.getTotal());
     dr.resetValues();
-
-    /*// Determine toggle strategy after moving to minimise advantage of opponents
-    if (sc.toggleStrategy(dr.getNumDice())) {
-
-      sc.handleToggle();
-    }*/
   }
 
   void switchToggleButton() {
