@@ -332,10 +332,6 @@ public class NavigationPane extends GameGrid
     toggleCheck.setChecked(isToggle);
   }
 
-  public boolean checkLastRoll(){
-    return dr.getNumRolls() == dr.getNumDice();
-  }
-
   public int rollDice() {
     return dr.getDieValues(sc.fetchCurrentPuppetNumber());
   }
