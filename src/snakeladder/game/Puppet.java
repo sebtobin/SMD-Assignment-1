@@ -103,7 +103,7 @@ public class Puppet extends Actor
 
   // Perform pre-computation for traversing the connection. Also requests SC to handle the output (display and sound)
   // of the connection.
-  void prepareToTraverseConnection() {
+  private void prepareToTraverseConnection() {
     gamePane.setSimulationPeriod(50);
 
     // Find the y coordinate of the starting location of the connection.
@@ -125,7 +125,7 @@ public class Puppet extends Actor
   }
 
   // Method for animating the Puppet traversing on a connection. Note: act must be enabled for this method to work.
-  void traverseConnection() {
+  private void traverseConnection() {
     int x = gamePane.x(y, currentCon);
     setPixelLocation(new Point(x, y));
     y += dy;
