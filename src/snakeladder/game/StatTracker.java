@@ -50,10 +50,11 @@ public class StatTracker
     }
     // prints the information of a specific tracker
     private void printTracker(Map<?, ?> tracker, int max){
-        int i = 0;
+        int i = 1;
         for (Map.Entry entry : tracker.entrySet()){
             System.out.print(entry.getKey()+"-"+entry.getValue());
             printSeparator(i, max);
+            i++;
         }
         System.out.println();
     }
