@@ -50,7 +50,7 @@ public class Puppet extends Actor
 
   private void moveToNextCell()
   {
-    /*int tens = cellIndex / 10;
+    int tens = cellIndex / 10;
     int ones = cellIndex - tens * 10;
 
     if (tens % 2 == 0)     // Cells starting left 01, 21, .. 81
@@ -66,9 +66,8 @@ public class Puppet extends Actor
         setLocation(new Location(getX(), getY() - 1));
       else
         setLocation(new Location(getX() - 1, getY()));
-    }*/
+    }
     cellIndex++;
-    setLocation(GamePane.cellToLocation(cellIndex));
   }
 
   private void endTurn() {
