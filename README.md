@@ -1,3 +1,9 @@
+<br>
+
+<i>Keeping this on my GitHub as like a time capsule</i>
+
+<br>
+
 # SMD-Project-1
 Assignment 1 for SWEN30006, Software Modelling and Design, "fancy snakes and ladders in java"
 
